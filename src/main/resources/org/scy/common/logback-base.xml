@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!--<include resource="org/springframework/boot/logging/logback/base.xml"></include>-->
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{dd/MM HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH:-./logs}/${LOG_FILE:-app.log}</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{dd/MM HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <FileNamePattern>logs/app_log_%i.zip</FileNamePattern>
+            <MinIndex>1</MinIndex>
+            <MaxIndex>10</MaxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>2MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="flog_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH:-./logs}/errors.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{dd/MM HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>ACCEPT</OnMatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <FileNamePattern>logs/errors_log_%i.zip</FileNamePattern>
+            <MinIndex>1</MinIndex>
+            <MaxIndex>20</MaxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>2MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="sql_script" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH:-./logs}/sql_script.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{dd/MM HH:mm:ss.SSS} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/sql_script_%d{yyyyMMdd}_%i.zip</fileNamePattern>
+            <!--<MinIndex>1</MinIndex>-->
+            <!--<MaxIndex>20</MaxIndex>-->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>2MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="stdout" />
+        <appender-ref ref="file_log"/>
+        <appender-ref ref="flog_error"/>
+    </root>
+
+    <logger name="org.apache" level="error"/>
+    <logger name="org.springframework" level="error"/>
+    <logger name="org.springframework.boot.context" level="info"/>
+    <logger name="org.hibernate.validator" level="error"/>
+
+    <logger name="org.scy.common.ds.conn" level="debug" additivity="false">
+        <appender-ref ref="sql_script" />
+    </logger>
+
+</included>
