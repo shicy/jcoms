@@ -1,6 +1,6 @@
 package org.scy.common.utils;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -94,10 +95,25 @@ public abstract class FileUtilsEx {
             if (fileUrl != null) {
                 File dir = new File(fileUrl.toURI());
                 if (dir.isDirectory()) {
-
+                    File[] subFiles = dir.listFiles();
+                    for (File subFile: subFiles) {
+                        if (subFile.isDirectory()) {
+                            files.addAll(Arrays.asList(getResourceFiles(subFile.getPath(), ext, deep)));
+                        }
+                        else if (StringUtils.isNoneBlank(ext)) {
+                            String[] temp = subFile.getName().split(".");
+                            if (ext.equals(temp[temp.length - 1]))
+                                files.add(subFile);
+                        }
+                        else {
+                            files.add(subFile);
+                        }
+                    }
                 }
                 else {
-
+                    File file = ResourceUtils.getFile(fileUrl);
+                    if (file != null && file.exists())
+                        files.add(file);
                 }
             }
         }
@@ -107,44 +123,6 @@ public abstract class FileUtilsEx {
         catch (URISyntaxException e) {
             // do nothing
         }
-
-//        if (fileUrl != null) {
-//            try {
-//                File dir = new File(fileUrl.toURI());
-//                if (dir.isDirectory()) {
-//
-//                }
-//                else {
-////                    File file = getResourceFile()
-//                }
-//            }
-//            catch (URISyntaxException e) {
-//
-//            }
-//        }
-//        if (resourceFilePath != null) {
-
-//            int dot = resourceFilePath.lastIndexOf('.');
-//            if (dot >= 0) {
-//                File file = getResourceFile(resourceFilePath);
-//                if (file != null)
-//                    files.add(file);
-//            }
-//            else {
-//            }
-//        }
-
-//        URL url = null;
-//        try {
-//            url = ResourceUtils.getURL(resourceFilePath);
-//        }
-//        catch (FileNotFoundException e) {
-//            // do nothing
-//        }
-//
-//        if (url != null) {
-//
-//        }
 
         return files.toArray(new File[0]);
     }
