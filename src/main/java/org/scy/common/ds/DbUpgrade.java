@@ -1,8 +1,5 @@
 package org.scy.common.ds;
 
-import org.springframework.util.ResourceUtils;
-
-import javax.annotation.Resource;
 import java.io.File;
 
 /**
@@ -21,12 +18,11 @@ public class DbUpgrade extends Thread {
 
     }
 
+    public DbUpgrade(String[] scripts) {
 
-    public DbUpgrade(File[] files) {
     }
 
-    public DbUpgrade(Resource[] resources) {
-
+    public DbUpgrade(File[] scripts) {
     }
 
     @Override
