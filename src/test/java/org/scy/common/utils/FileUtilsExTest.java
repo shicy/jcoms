@@ -15,14 +15,21 @@ import java.net.URL;
  */
 public class FileUtilsExTest {
 
+    /**
+     * 外部资源文件
+     */
     @Test
     public void testGetResourceFile() {
         String fileName = "org/scy/common/test/[1.0.0]base_v1.0.sql";
+        fileName = "org/scy/common/test";
         File file = FileUtilsEx.getResourceFile(fileName);
         Assert.assertNotNull("获取文件失败", file);
         FileUtilsEx.print(file, 10);
     }
 
+    /**
+     * jar 包内资源文件（不能获取）
+     */
     @Test
     public void testGetResourceFile2() {
         String fileName = "LICENSE-junit.txt";
@@ -30,6 +37,9 @@ public class FileUtilsExTest {
         Assert.assertNull("获取文件失败", file);
     }
 
+    /**
+     * 外部资源文件流
+     */
     @Test
     public void testGetResourceInputStream() {
         String fileName = "org/scy/common/test/[1.0.0]base_v1.0.sql";
@@ -43,6 +53,9 @@ public class FileUtilsExTest {
         }
     }
 
+    /**
+     * jar 包内资源文件流（可以获取）
+     */
     @Test
     public void testGetResourceInputStream2() {
         String fileName = "LICENSE-junit.txt";
@@ -56,6 +69,9 @@ public class FileUtilsExTest {
         }
     }
 
+    /**
+     * 批量获取资源文件（不能获取 jar 包内资源文件, 忽略不存在的文件）
+     */
     @Test
     public void testGetResourceFiles() {
         String[] fileNames = new String [5];
@@ -70,6 +86,9 @@ public class FileUtilsExTest {
         this.showFiles(files, 0);
     }
 
+    /**
+     * 批量获取资源文件（可以获取 jar 包内资源文件, 忽略不存在的文件）
+     */
     @Test
     public void testGetResourceFiles2() {
         String[] fileNames = new String [5];
@@ -79,26 +98,34 @@ public class FileUtilsExTest {
         fileNames[3] = "org/scy/common/nofile.txt";
         fileNames[4] = "LICENSE-junit.txt";
 
-        URL[] urls = FileUtilsEx.getResources(fileNames);
-        Assert.assertTrue("批量获取资源数不正确", urls.length == 4);
-        this.showFiles(urls, 2);
+        URL[] resources = FileUtilsEx.getResources(fileNames);
+        Assert.assertTrue("批量获取资源数不正确", resources.length == 4);
+        this.showFiles(resources, 2);
     }
 
+    /**
+     * 按目录获取的资源文件
+     */
     @Test
     public void testGetResourceFilesWithDir() {
-        String fileDir = "classpath:org/scy/common/test";
-
-        File[] files1 = FileUtilsEx.getResourceFiles(fileDir);
-        this.showFiles(files1, 0);
-        Assert.assertTrue("按目录获取所有文件数量不正确", files1.length == 2);
-
-        File[] files2 = FileUtilsEx.getResourceFiles(fileDir, true);
-        this.showFiles(files2, 0);
-        Assert.assertTrue("按目录获取所有文件数量不正确，包含子目录", files2.length == 3);
-
-        File[] files3 = FileUtilsEx.getResourceFiles(fileDir, "sql", true);
-        this.showFiles(files3, 0);
-        Assert.assertTrue("按目录获取所有文件数量不正确，仅sql文件类型", files3.length == 1);
+        String fileDir = "org/scy/common/test";
+        fileDir = "org/junit/rules";
+        URL[] resources = FileUtilsEx.getResources(fileDir);
+        Assert.assertTrue("按目录获取资源文件数不正确", resources.length == 2);
+        this.showFiles(resources, 2);
+//        String fileDir = "classpath:org/scy/common/test";
+//
+//        File[] files1 = FileUtilsEx.getResourceFiles(fileDir);
+//        this.showFiles(files1, 0);
+//        Assert.assertTrue("按目录获取所有文件数量不正确", files1.length == 2);
+//
+//        File[] files2 = FileUtilsEx.getResourceFiles(fileDir, true);
+//        this.showFiles(files2, 0);
+//        Assert.assertTrue("按目录获取所有文件数量不正确，包含子目录", files2.length == 3);
+//
+//        File[] files3 = FileUtilsEx.getResourceFiles(fileDir, "sql", true);
+//        this.showFiles(files3, 0);
+//        Assert.assertTrue("按目录获取所有文件数量不正确，仅sql文件类型", files3.length == 1);
     }
 
     @Test
@@ -133,13 +160,6 @@ public class FileUtilsExTest {
                 }
             }
         }
-    }
-
-    @Test
-    public void myTest() {
-        String fileName = "LICENSE-junit.txt";
-        fileName = "org/scy/common/test/[1.0.0]base_v1.0.sql";
-
     }
 
 }

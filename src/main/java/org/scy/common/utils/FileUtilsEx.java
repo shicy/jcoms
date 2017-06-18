@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ResourceUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -53,6 +52,76 @@ public abstract class FileUtilsEx {
     }
 
     /**
+     * 获取某个目录下的所有资源文件
+     * @param resourceDir 文件目录
+     * @return 返回资源 URL 对象集，不会为 null
+     */
+    public static URL[] getResources(String resourceDir) {
+        return getResources(resourceDir, null, false);
+    }
+
+    /**
+     * 获取某个目录下的所有资源文件
+     * @param resourceDir 文件目录
+     * @param ext 筛选文件的后缀名称（不含“.”）
+     * @return 返回资源 URL 对象集，不会为 null
+     */
+    public static URL[] getResources(String resourceDir, String ext) {
+        return getResources(resourceDir, ext, false);
+    }
+
+    /**
+     * 获取某个目录下的所有资源文件
+     * @param resourceDir 文件目录
+     * @param deep 是否同时获取子目录下的资源文件
+     * @return 返回资源 URL 对象集，不会为 null
+     */
+    public static URL[] getResources(String resourceDir, boolean deep) {
+        return getResources(resourceDir, null, deep);
+    }
+
+    /**
+     * 获取某个目录下的所有资源文件
+     * @param resourceDir 文件目录
+     * @param ext 筛选文件的后缀名称（不含“.”）
+     * @param deep 是否同时获取子目录下的资源文件
+     * @return 返回资源 URL 对象集，不会为 null
+     */
+    public static URL[] getResources(String resourceDir, String ext, boolean deep) {
+        List<URL> resources = new ArrayList<URL>();
+
+        URL resource = getResource(resourceDir);
+        if (resource != null) {
+            if (isJarURL(resource)) {
+
+            }
+            else {
+
+            }
+            // TODO
+        }
+//        File dir = toFile(resource);
+//        if (dir != null) {
+//            if (dir.isDirectory()) {
+//                System.out.print("dir");
+//            }
+//            else {
+//                System.out.print("file");
+//            }
+//        }
+
+        return resources.toArray(new URL[0]);
+    }
+
+    private static URL[] getJarResources(URL resourceDir, String ext, boolean deep) {
+        return null;
+    }
+
+    private static URL[] getFileResources(URL resourceDir, String ext, boolean deep) {
+        return null;
+    }
+
+    /**
      * 获取资源文件，将资源 URL 转换成文件对象 File，仅本地独立的文件可以转换
      * @param resource 资源信息
      * @return 返回改资源的文件对象，如果转换失败则返回 null
@@ -60,12 +129,7 @@ public abstract class FileUtilsEx {
     public static File getResourceFile(URL resource) {
         if (resource != null) {
             if (isFileUrl(resource)) {
-                try {
-                    return new File(resource.toURI().getSchemeSpecificPart());
-                }
-                catch (URISyntaxException e) {
-                    return new File(resource.getFile());
-                }
+                return toFile(resource);
             }
             else {
                 logger.warn("无法将资源转换成文件对象：" + resource.getFile());
@@ -84,7 +148,7 @@ public abstract class FileUtilsEx {
     }
 
     /**
-     * 批量获取资源文件
+     * 批量获取资源文件，无法获取 jar 包中的资源文件
      * @param resourceFileNames 多个资源文件名称数组
      * @return 返回存在的文件数组，不会为 null
      */
@@ -112,7 +176,7 @@ public abstract class FileUtilsEx {
     /**
      * 获取某个目录下的所有资源文件，不会遍历子目录
      * @param resourceFilePath 某个资源文件目录，如果是一个具体文件将只返回该文件，同{@link FileUtilsEx#getResourceFile(String)}
-     * @param ext 过滤筛选文件的后缀名称（不带“.”）
+     * @param ext 过滤筛选文件的后缀名称（不含“.”）
      * @return 返回存在的文件数组，不会为 null
      */
     public static File[] getResourceFiles(String resourceFilePath, String ext) {
@@ -139,17 +203,19 @@ public abstract class FileUtilsEx {
     public static File[] getResourceFiles(String resourceFilePath, String ext, boolean deep) {
         List<File> files = new ArrayList<File>();
 
-        try {
-            File dir = ResourceUtils.getFile(resourceFilePath);
-            if (dir.isDirectory()) {
-                for (File subFile: dir.listFiles()) {
+        File resourceFile = toFile(getResource(resourceFilePath));
+        if (resourceFile != null) {
+            if (resourceFile.isDirectory()) {
+                for (File subFile: resourceFile.listFiles()) {
                     if (subFile.isDirectory()) {
-                        if (deep)
-                            files.addAll(Arrays.asList(getResourceFiles(subFile.getPath(), ext, true)));
+                        if (deep) {
+                            File[] subFiles = getResourceFiles(subFile.getPath(), ext, true);
+                            if (subFiles.length > 0)
+                                files.addAll(Arrays.asList(subFiles));
+                        }
                     }
-                    else if (StringUtils.isNotBlank(ext)) {
-                        String[] temp = subFile.getName().split("\\.");
-                        if (ext.equals(temp[temp.length - 1]))
+                    else if (StringUtils.isNoneBlank(ext)) {
+                        if (ext.equals(getExtensionName(subFile)))
                             files.add(subFile);
                     }
                     else {
@@ -157,18 +223,13 @@ public abstract class FileUtilsEx {
                     }
                 }
             }
-            else if (StringUtils.isNotBlank(ext)) {
-                String[] temp = dir.getName().split(".");
-                if (ext.equals(temp[temp.length - 1]))
-                    files.add(dir);
+            else if (StringUtils.isNoneBlank(ext)) {
+                if (ext.equals(getExtensionName(resourceFile)))
+                    files.add(resourceFile);
             }
             else {
-                files.add(dir);
+                files.add(resourceFile);
             }
-        }
-        catch (FileNotFoundException e) {
-            // do nothing
-            e.printStackTrace();
         }
 
         return files.toArray(new File[0]);
@@ -180,17 +241,47 @@ public abstract class FileUtilsEx {
      * @return 返回该资源的输入流，如果资源不存在则返回 null
      */
     public static InputStream getResourceStream(String resourceFileName) {
-        URL resource = getResource(resourceFileName);
+        return getResourceStream(getResource(resourceFileName));
+    }
+
+    /**
+     * 获取资源文件输入流
+     * @param resource 资源文件
+     * @return 返回该资源的输入流, 异常时返回 null
+     */
+    public static InputStream getResourceStream(URL resource) {
         if (resource != null) {
             try {
                 return resource.openStream();
             }
             catch (IOException e) {
-                logger.warn("获取资源文件流失败：" + resourceFileName);
+                logger.warn("获取资源文件流失败：" + resource.getFile());
                 e.printStackTrace();
             }
         }
         return null;
+    }
+
+    /**
+     * 获取文件后缀名称
+     * @param fileName 文件名称
+     * @return 返回文件后缀名称
+     */
+    public static String getExtensionName(String fileName) {
+        if (StringUtils.isNoneBlank(fileName) && fileName.indexOf('.') >= 0) {
+            String[] names = fileName.split("\\.");
+            return names[names.length - 1];
+        }
+        return null;
+    }
+
+    /**
+     * 获取文件后缀名称
+     * @param file 文件对象
+     * @return 返回文件后缀名称
+     */
+    public static String getExtensionName(File file) {
+        return file != null ? getExtensionName(file.getName()) : null;
     }
 
     /**
@@ -269,8 +360,41 @@ public abstract class FileUtilsEx {
      * @return 如果是文件资源返回 true，否则返回 false
      */
     public static boolean isFileUrl(URL url) {
-        String protocol = url.getProtocol();
-        return "file".equals(protocol) || "vfsfile".equals(protocol) || "vfs".equals(protocol);
+        if (url != null) {
+            String protocol = url.getProtocol();
+            return "file".equals(protocol) || "vfsfile".equals(protocol) || "vfs".equals(protocol);
+        }
+        return false;
+    }
+
+    /**
+     * 判断是不是 jar 包内文件
+     * @param url
+     * @return
+     */
+    public static boolean isJarURL(URL url) {
+        if (url != null) {
+            String protocol = url.getProtocol();
+            return "jar".equals(protocol) || "war".equals(protocol) || "zip".equals(protocol) || "vfszip".equals(protocol) || "wsjar".equals(protocol);
+        }
+        return false;
+    }
+
+    /**
+     * 资源转换成文件对象
+     * @param resource 资源文件信息
+     * @return 返回文件对象
+     */
+    public static File toFile(URL resource) {
+        if (resource != null) {
+            try {
+                return new File(resource.toURI().getSchemeSpecificPart());
+            }
+            catch (URISyntaxException e) {
+                return new File(resource.getFile());
+            }
+        }
+        return null;
     }
 
 }
