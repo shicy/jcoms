@@ -1,6 +1,7 @@
 package org.scy.common.utils;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +22,6 @@ public class FileUtilsExTest {
     @Test
     public void testGetResourceFile() {
         String fileName = "org/scy/common/test/[1.0.0]base_v1.0.sql";
-        fileName = "org/scy/common/test";
         File file = FileUtilsEx.getResourceFile(fileName);
         Assert.assertNotNull("获取文件失败", file);
         FileUtilsEx.print(file, 10);
@@ -109,30 +109,19 @@ public class FileUtilsExTest {
     @Test
     public void testGetResourceFilesWithDir() {
         String fileDir = "org/scy/common/test";
-        fileDir = "org/junit/rules";
         URL[] resources = FileUtilsEx.getResources(fileDir);
-        Assert.assertTrue("按目录获取资源文件数不正确", resources.length == 2);
         this.showFiles(resources, 2);
-//        String fileDir = "classpath:org/scy/common/test";
-//
-//        File[] files1 = FileUtilsEx.getResourceFiles(fileDir);
-//        this.showFiles(files1, 0);
-//        Assert.assertTrue("按目录获取所有文件数量不正确", files1.length == 2);
-//
-//        File[] files2 = FileUtilsEx.getResourceFiles(fileDir, true);
-//        this.showFiles(files2, 0);
-//        Assert.assertTrue("按目录获取所有文件数量不正确，包含子目录", files2.length == 3);
-//
-//        File[] files3 = FileUtilsEx.getResourceFiles(fileDir, "sql", true);
-//        this.showFiles(files3, 0);
-//        Assert.assertTrue("按目录获取所有文件数量不正确，仅sql文件类型", files3.length == 1);
     }
 
+    /**
+     * 按目录获取 jar 包内文件
+     */
     @Test
     public void testGetResourceFilesWithDir2() {
-        String fileDir = "classpath:org/apache/commons/io";
-        File[] files = FileUtilsEx.getResourceFiles(fileDir);
-        this.showFiles(files, 0);
+        String fileDir = "org/junit/rules";
+        fileDir = "META-INF/maven/com.alibaba";
+        URL[] resources = FileUtilsEx.getResources(fileDir, true);
+        this.showFiles(resources, 3);
     }
 
     private void showFiles(File[] files, int rows) {
@@ -160,6 +149,16 @@ public class FileUtilsExTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void myTest() {
+        String fileName = "a/b/c/d";
+        String[] names = fileName.split(File.separator);
+        for (String n: names) {
+            System.out.println(n);
+        }
+        System.out.println(names.length);
     }
 
 }
