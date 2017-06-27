@@ -105,7 +105,7 @@ public abstract class FileUtilsEx {
     }
 
     /**
-     * 获取包内资源文件zjzw65656256 i5442530
+     * 获取包内资源文件
      * @param resource 资源根目录信息
      * @param ext 筛选文件后缀名称（不含“.”）
      * @param deep 是否获取子目录

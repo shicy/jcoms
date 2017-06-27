@@ -1,7 +1,6 @@
 package org.scy.common.utils;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +20,7 @@ public class FileUtilsExTest {
      */
     @Test
     public void testGetResourceFile() {
-        String fileName = "org/scy/common/test/[1.0.0]base_v1.0.sql";
+        String fileName = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
         File file = FileUtilsEx.getResourceFile(fileName);
         Assert.assertNotNull("获取文件失败", file);
         FileUtilsEx.print(file, 10);
@@ -42,7 +41,7 @@ public class FileUtilsExTest {
      */
     @Test
     public void testGetResourceInputStream() {
-        String fileName = "org/scy/common/test/[1.0.0]base_v1.0.sql";
+        String fileName = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
         InputStream stream = FileUtilsEx.getResourceStream(fileName);
         Assert.assertNotNull("获取文件流失败", stream);
         try {
@@ -75,7 +74,7 @@ public class FileUtilsExTest {
     @Test
     public void testGetResourceFiles() {
         String[] fileNames = new String [5];
-        fileNames[0] = "org/scy/common/test/[1.0.0]base_v1.0.sql";
+        fileNames[0] = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
         fileNames[1] = "org/scy/common/test/readme.txt";
         fileNames[2] = "org/scy/common/logback-base.xml";
         fileNames[3] = "org/scy/common/nofile.txt";
@@ -92,7 +91,7 @@ public class FileUtilsExTest {
     @Test
     public void testGetResourceFiles2() {
         String[] fileNames = new String [5];
-        fileNames[0] = "org/scy/common/test/[1.0.0]base_v1.0.sql";
+        fileNames[0] = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
         fileNames[1] = "org/scy/common/test/readme.txt";
         fileNames[2] = "org/scy/common/logback-base.xml";
         fileNames[3] = "org/scy/common/nofile.txt";
