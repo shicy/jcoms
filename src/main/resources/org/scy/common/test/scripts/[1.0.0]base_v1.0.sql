@@ -5,8 +5,17 @@
 -- ========================================================
 
 -- 如果数据库不存在，则新建数据库 <2017-06-09 17:30:00>
-CREATE DATABASE IF NOT EXISTS testdb;
-GO
+-- CREATE DATABASE IF NOT EXISTS testdb;
+-- GO
+
+USE testdb;
+
+-- 创建字典表
+drop table if exists sys_dictionary;
+CREATE TABLE sys_dictionary (
+    id INT NOT NULL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
 
 -- 创建用户表
 DROP TABLE IF EXISTS sys_user;
