@@ -15,14 +15,65 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
- * 文件工具类，针对{@link org.apache.commons.io.FileUtils}的扩展
+ * 文件工具类，是{@link org.apache.commons.io.FileUtils}的扩展
  * Created by shicy on 2017/6/14.
  */
 public abstract class FileUtilsEx {
 
     private static Logger logger = LoggerFactory.getLogger(FileUtilsEx.class);
+
+    /**
+     * 复制单个文件 modify by shicy 2013-1-26
+     * @param source
+     * @param dest
+     */
+
+    public final static void copyFile(File source, File dest) {
+        if (source == null || dest == null)
+            return ;
+
+        if (source.exists() == false)
+            return ;
+
+        InputStream input = null;
+        OutputStream output = null;
+
+        try {
+            input = new BufferedInputStream(new FileInputStream(source));
+            output = new BufferedOutputStream(new FileOutputStream(dest));
+            IOUtils.copy(input, output);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            IOUtils.closeQuietly(input);
+            IOUtils.closeQuietly(output);
+        }
+    }
+
+    /**
+     * 删除本地文件
+     * @param fileNames
+     */
+    public static void deleteFiles(String[] fileNames) {
+        if (fileNames != null) {
+            File file = null;
+            for (String fileName: fileNames) {
+                if (StringUtils.isNotBlank(fileName)) {
+                    file = new File(fileName);
+                    if (file.exists()) {
+                        if (file.delete() == false)
+                            file.deleteOnExit();
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * 获取资源文件
@@ -126,7 +177,7 @@ public abstract class FileUtilsEx {
                     String fileName = jarEntry.getName();
 
                     if (ext != null) {
-                        String extName = getExtensionName(fileName);
+                        String extName = getFileExtension(fileName);
                         if ((ext.length() == 0 && extName != null) || !ext.equals(extName))
                             continue;
                     }
@@ -309,6 +360,20 @@ public abstract class FileUtilsEx {
     }
 
     /**
+     * 获取文件后缀名
+     * @param fileName
+     * @return
+     */
+    public static String getFileExtension(String fileName) {
+        if (StringUtils.isBlank(fileName))
+            return "";
+        fileName = StringUtilsEx.tranToFileSeparator(fileName);
+        if (StringUtils.indexOf(fileName, File.separator) >= 0)
+            fileName = StringUtils.substringAfterLast(fileName, File.separator);
+        return StringUtils.substringAfterLast(fileName, ".");
+    }
+
+    /**
      * 获取资源文件输入流
      * @param resourceFileName 资源文件路径名称
      * @return 返回该资源的输入流，如果资源不存在则返回 null
@@ -337,24 +402,55 @@ public abstract class FileUtilsEx {
 
     /**
      * 获取文件后缀名称
-     * @param fileName 文件名称
-     * @return 返回文件后缀名称
-     */
-    public static String getExtensionName(String fileName) {
-        if (StringUtils.isNoneBlank(fileName) && fileName.indexOf('.') >= 0) {
-            String[] names = fileName.split("\\.");
-            return names[names.length - 1];
-        }
-        return null;
-    }
-
-    /**
-     * 获取文件后缀名称
      * @param file 文件对象
      * @return 返回文件后缀名称
      */
     public static String getExtensionName(File file) {
-        return file != null ? getExtensionName(file.getName()) : null;
+        return file != null ? getFileExtension(file.getName()) : null;
+    }
+
+    /**
+     * 判断是不是文件 URL，指独立文件，而非包内或网络等资源
+     * @param url 资源文件信息
+     * @return 如果是文件资源返回 true，否则返回 false
+     */
+    public static boolean isFileUrl(URL url) {
+        if (url != null) {
+            String protocol = url.getProtocol();
+            return "file".equals(protocol) || "vfsfile".equals(protocol) || "vfs".equals(protocol);
+        }
+        return false;
+    }
+
+    /**
+     * 判断是不是 jar 包内文件
+     * @param url 资源文件信息
+     * @return 如果是 jar 包内的资源文件返回 true，否则返回 false
+     */
+    public static boolean isJarURL(URL url) {
+        if (url != null) {
+            String protocol = url.getProtocol();
+            return "jar".equals(protocol) || "war".equals(protocol) || "zip".equals(protocol) || "vfszip".equals(protocol) || "wsjar".equals(protocol);
+        }
+        return false;
+    }
+
+    /**
+     * 根据文件名创建文件目录。
+     * <ul>
+     * 	<li>makeDirectory("d:/a/b/c"), 创建D盘a/b/c目录
+     * 	<li>makeDirectory("d:/a/b/c.txt"), 创建D盘a/b目录
+     * </ul>
+     * @param fileName
+     */
+    public final static void makeDirectory(String fileName) {
+        File file = new File(fileName);
+        fileName = file.getAbsolutePath();
+        fileName = StringUtils.substringAfterLast(fileName, File.separator);
+        if (fileName.indexOf('.') >= 0)
+            file = file.getParentFile();
+        if (!file.exists())
+            file.mkdirs();
     }
 
     /**
@@ -428,32 +524,6 @@ public abstract class FileUtilsEx {
     }
 
     /**
-     * 判断是不是文件 URL，指独立文件，而非包内或网络等资源
-     * @param url 资源文件信息
-     * @return 如果是文件资源返回 true，否则返回 false
-     */
-    public static boolean isFileUrl(URL url) {
-        if (url != null) {
-            String protocol = url.getProtocol();
-            return "file".equals(protocol) || "vfsfile".equals(protocol) || "vfs".equals(protocol);
-        }
-        return false;
-    }
-
-    /**
-     * 判断是不是 jar 包内文件
-     * @param url 资源文件信息
-     * @return 如果是 jar 包内的资源文件返回 true，否则返回 false
-     */
-    public static boolean isJarURL(URL url) {
-        if (url != null) {
-            String protocol = url.getProtocol();
-            return "jar".equals(protocol) || "war".equals(protocol) || "zip".equals(protocol) || "vfszip".equals(protocol) || "wsjar".equals(protocol);
-        }
-        return false;
-    }
-
-    /**
      * 资源转换成文件对象
      * @param resource 资源文件信息
      * @return 返回文件对象
@@ -468,6 +538,77 @@ public abstract class FileUtilsEx {
             }
         }
         return null;
+    }
+
+    /**
+     * 将字节码写入文件 add by shicy 2013-1-26
+     * @param fileName
+     * @param datas
+     * @throws IOException
+     */
+    public final static void write(String fileName, byte[] datas) throws IOException {
+        write(new File(fileName), datas);
+    }
+
+    /**
+     * 将字节码写入文件
+     * @param file
+     * @param datas
+     * @throws IOException
+     */
+    public final static void write(File file, byte[] datas) throws IOException {
+        OutputStream output = null;
+        try {
+            makeDirectory(file.getAbsolutePath());
+            output = new BufferedOutputStream(new FileOutputStream(file));
+            output.write(datas);
+            output.flush();
+        }
+        finally {
+            IOUtils.closeQuietly(output);
+        }
+    }
+
+    /**
+     * 将一组文件压缩到一个目录文件中
+     * @param srcFiles
+     * @param destFile
+     * @throws IOException
+     */
+    public final static void zipFiles(File[] srcFiles, File destFile) throws IOException {
+        ZipOutputStream zout = null; // 这里，JDK自带的压缩存在中文文件名乱码问题
+        try {
+            // 创建目标文件的压缩流
+            zout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destFile)));
+            // 设置压缩算法
+            zout.setMethod(ZipOutputStream.DEFLATED);
+            int bufSize = 1024 * 4;
+            byte[] buf = new byte[bufSize];
+            for (int i = 0; i < srcFiles.length; i++){
+                if (!srcFiles[i].exists())
+                    continue;
+                BufferedInputStream bin = null;
+                try {
+                    // 创建文件输入流
+                    bin = new BufferedInputStream(new FileInputStream(srcFiles[i]));
+                    // 为读出的数据创建一个ZIP条目列表
+                    ZipEntry entry = new ZipEntry(srcFiles[i].getName());
+                    zout.putNextEntry(entry);
+                    int len = -1;
+                    while ((len = bin.read(buf, 0, bufSize)) != -1){
+                        zout.write(buf, 0, len);
+                    }
+                }
+                finally {
+                    if (bin != null)
+                        bin.close();
+                }
+            }
+        }
+        finally {
+            if (zout != null)
+                zout.close();
+        }
     }
 
 }
