@@ -33,7 +33,7 @@ public class TestDataSourceBeanDefinition implements BeanDefinitionRegistryPostP
         properties.addPropertyValue("driverClassName", "com.mysql.jdbc.Driver");
         properties.addPropertyValue("url", "jdbc:mysql://127.0.0.1:3306/test?useSSL=false&characterEncoding=utf8");
         properties.addPropertyValue("username", "root");
-        properties.addPropertyValue("password", "123456");
+        properties.addPropertyValue("password", "12345678");
     }
 
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {

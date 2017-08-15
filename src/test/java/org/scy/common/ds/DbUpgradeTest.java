@@ -26,6 +26,6 @@ public class DbUpgradeTest {
         upgrade.setListener(new DbUpgrade.DbUpgradeListener() {
 
         });
-        upgrade.start();
+        upgrade.run();
     }
 }

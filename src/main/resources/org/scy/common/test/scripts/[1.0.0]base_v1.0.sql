@@ -8,7 +8,7 @@
 -- CREATE DATABASE IF NOT EXISTS testdb;
 -- GO
 
-USE testdb;
+-- USE testdb;
 
 -- 创建字典表
 drop table if exists sys_dictionary;
@@ -23,3 +23,6 @@ CREATE TABLE sys_user (
     id INT NOT NULL PRIMARY KEY,
     name VARCHAR(30) NULL
 );
+
+-- 用户表添加日期 <2017-08-14 18:07:00>
+alter table `sys_user` Add column createDate BIGINT null;
