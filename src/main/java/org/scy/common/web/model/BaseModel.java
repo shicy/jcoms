@@ -14,7 +14,7 @@ public class BaseModel implements Serializable {
     /**
      * 模型编号，主键
      */
-    private long id;
+    private int id;
 
     /**
      * 创建时间，时间戳：毫秒
@@ -45,7 +45,7 @@ public class BaseModel implements Serializable {
      * 获取模型编号
      * @return
      */
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -53,7 +53,7 @@ public class BaseModel implements Serializable {
      * 设置模型编号
      * @param id
      */
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
