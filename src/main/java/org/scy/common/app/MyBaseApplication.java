@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationListener;
 
 /**
  * 应用程序基类
- * @author shicy Created on 2017-08-30
+ * Created by shicy on 2017/8/30
  */
 public class MyBaseApplication {
 
