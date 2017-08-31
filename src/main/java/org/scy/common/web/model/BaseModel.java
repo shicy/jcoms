@@ -1,5 +1,7 @@
 package org.scy.common.web.model;
 
+import org.scy.common.Const;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,42 +13,33 @@ public class BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1002017051100000000L;
 
-    /**
-     * 模型编号，主键
-     */
+    // 模型编号，主键
     private int id;
 
-    /**
-     * 创建时间，时间戳：毫秒
-     */
-    private Long tcreated;
+    // 状态：0-无效 1-有效
+    private short state = Const.ENABLED;
 
-    /**
-     * 更新时间，时间戳：毫秒
-     */
-    private Long tupdated;
+    // 创建用户编号
+    private int creatorId;
 
-    /**
-     * 创建时间，字符串格式：yyyy-MM-dd HH:mm:ss.SSS
-     */
-    private String dcreated;
+    // 创建时间，时间戳：毫秒
+    private Long createDate;
 
-    /**
-     * 更新时间，字符串格式：yyyy-MM-dd HH:mm:ss.SSS
-     */
-    private String dupdated;
+    // 最后更新用户编号
+    private int updatorId;
 
-    /**
-     * 平台租户编号
-     */
-    private int saasId;
+    // 最后更新时间，时间戳：毫秒
+    private Long updateDate;
+
+    // 平台租户编号
+    private int paasId;
 
     /**
      * 获取模型编号
      * @return
      */
     public int getId() {
-        return id;
+        return this.id;
     }
 
     /**
@@ -58,115 +51,131 @@ public class BaseModel implements Serializable {
     }
 
     /**
-     * 获取创建时间戳
+     * 获取状态
      * @return
      */
-    public Long getTcreated() {
-        return this.tcreated;
+    public short getState() {
+        return this.state;
     }
 
     /**
-     * 设置创建时间戳
-     * @param tcreated
+     * 设置状态
+     * @param state
      */
-    public void setTcreated(Long tcreated) {
-        this.tcreated = tcreated;
+    public void setState(short state) {
+        this.state = state;
     }
 
     /**
-     * 获取更新时间戳
+     * 获取创建用户编号
      * @return
      */
-    public Long getTupdated() {
-        return this.tupdated;
+    public int getCreatorId() {
+        return this.creatorId;
     }
 
     /**
-     * 设置更新时间戳
-     * @param tupdated
+     * 设置创建用户编号
+     * @param creatorId
      */
-    public void setTupdated(Long tupdated) {
-        this.tupdated = tupdated;
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
     }
 
     /**
-     * 获取创建时间字符串，如：2017-05-11 16:50:00
+     * 获取更新用户编号
      * @return
      */
-    public String getDcreated() {
-        return this.dcreated;
+    public int getUpdatorId() {
+        return this.updatorId;
     }
 
     /**
-     * 设置创建时间字符串，如：2017-05-11 16:50:00
-     * @param dcreated
+     * 设置更新用户编号
+     * @param updatorId
      */
-    public void setDcreated(String dcreated) {
-        this.dcreated = dcreated;
+    public void setUpdatorId(int updatorId) {
+        this.updatorId = updatorId;
     }
 
     /**
-     * 获取更新时间字符串，如：2017-05-11 17:00:00
+     * 获取创建时间，返回时间戳
      * @return
      */
-    public String getDupdated() {
-        return this.dupdated;
+    public Long getCreateTime() {
+        return this.createDate;
     }
 
     /**
-     * 设置更新时间字符串，如：2017-05-11 17:00:00
-     * @param dupdated
-     */
-    public void setDupdated(String dupdated) {
-        this.dupdated = dupdated;
-    }
-
-    /**
-     * 获取创建时间
+     * 获取创建时间，返回日期对象
      * @return
      */
-    public Date getCreatedDate() {
-        return null;
+    public Date getCreateDate() {
+        return this.createDate != null ? new Date(this.createDate) : null;
     }
 
     /**
      * 设置创建时间
-     * @param createdDate
+     * @param createDate
      */
-    public void setCreatedDate(Date createdDate) {
-
+    public void setCreateTime(Long createDate) {
+        this.createDate = createDate;
     }
 
     /**
-     * 获取更新时间
+     * 设置创建时间
+     * @param createDate
+     */
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate != null ? createDate.getTime() : null;
+    }
+
+    /**
+     * 获取更新时间，返回时间戳
      * @return
      */
-    public Date getUpdatedDate() {
-        return null;
+    public Long getUpdateTime() {
+        return this.updateDate;
+    }
+
+    /**
+     * 获取更新时间，返回日期对象
+     * @return
+     */
+    public Date getUpdateDate() {
+        return this.updateDate != null ? new Date(this.updateDate) : null;
     }
 
     /**
      * 设置更新时间
-     * @param updatedDate
+     * @param updateDate
      */
-    public void setUpdatedDate(Date updatedDate) {
+    public void setUpdateTime(Long updateDate) {
+        this.updateDate = updateDate > 0 ? updateDate : null;
+    }
 
+    /**
+     * 设置更新时间
+     * @param updateDate
+     */
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate != null ? updateDate.getTime() : null;
     }
 
     /**
      * 获取平台租户编号
      * @return
      */
-    public int getSaasId() {
-        return this.saasId;
+    public int getPaasId() {
+        return this.paasId;
     }
 
     /**
      * 设置平台租户编号
-     * @param saasId
+     * @param paasId
      */
-    public void setSaasId(int saasId) {
-        this.saasId = saasId;
+    public void setPaasId(int paasId) {
+        this.paasId = paasId;
     }
 
 }

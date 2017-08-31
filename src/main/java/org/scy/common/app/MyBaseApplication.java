@@ -1,5 +1,7 @@
 package org.scy.common.app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationListener;
 
@@ -8,6 +10,8 @@ import org.springframework.context.ApplicationListener;
  * Created by shicy on 2017/8/30
  */
 public class MyBaseApplication {
+
+    private Logger logger = LoggerFactory.getLogger(MyBaseApplication.class);
 
     // 当前应用程序实例
     private static SpringApplication application;
@@ -20,13 +24,21 @@ public class MyBaseApplication {
     }
 
     /**
+     * 获取应用程序实例
+     * @return
+     */
+    public static SpringApplication getApplication() {
+        return application;
+    }
+
+    /**
      * 开始运行
      * @param args
      */
     public void run(String[] args) {
         this.setListeners(application);
         application.run(args);
-        System.out.println("启动成功！");
+        logger.info("ready!");
     }
 
     /**
