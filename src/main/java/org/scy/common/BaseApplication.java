@@ -1,25 +1,34 @@
-package org.scy.common.app;
+package org.scy.common;
 
+import org.scy.common.ds.DbUpgrade;
+import org.scy.common.listener.AppContextListener;
+import org.scy.common.listener.AppEnvironmentListener;
+import org.scy.common.listener.AppFailedListener;
+import org.scy.common.listener.AppStartListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * 应用程序基类
  * Created by shicy on 2017/8/30
  */
-public class MyBaseApplication {
+public class BaseApplication {
 
-    private Logger logger = LoggerFactory.getLogger(MyBaseApplication.class);
+    private Logger logger = LoggerFactory.getLogger(BaseApplication.class);
 
     // 当前应用程序实例
     private static SpringApplication application;
 
+    private static ApplicationContext context;
+
     /**
      * 构造方法
      */
-    public MyBaseApplication() {
+    public BaseApplication() {
         application = new SpringApplication(this.getClass());
     }
 
@@ -36,8 +45,16 @@ public class MyBaseApplication {
      * @param args
      */
     public void run(String[] args) {
+        // 设置监听器
         this.setListeners(application);
-        application.run(args);
+
+        // 应用程序开始运行
+        context = application.run(args);
+
+        // 更新数据库
+        this.databaseUpgrade();
+
+        // 完成
         logger.info("ready!");
     }
 
@@ -93,6 +110,27 @@ public class MyBaseApplication {
      */
     protected ApplicationListener getFailedListener() {
         return new AppFailedListener();
+    }
+
+    /**
+     * 更新数据库
+     */
+    private void databaseUpgrade() {
+        JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
+        if (jdbcTemplate != null) {
+            String scriptResource = this.getDbScriptResource();
+            if (scriptResource != null) {
+                new DbUpgrade(jdbcTemplate, scriptResource).run();
+            }
+        }
+    }
+
+    /**
+     * 获取数据库脚本文件
+     * @return 返回脚本所在资源文件目录
+     */
+    protected String getDbScriptResource() {
+        return null;
     }
 
 }
