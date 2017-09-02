@@ -1,4 +1,4 @@
-package org.scy.common.app;
+package org.scy.common.listener;
 
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.context.ApplicationListener;
