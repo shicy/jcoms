@@ -1,5 +1,6 @@
 package org.scy.common.web.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.scy.common.Const;
 
 import java.io.Serializable;
@@ -110,6 +111,7 @@ public class BaseModel implements Serializable {
      * 获取创建时间，返回日期对象
      * @return
      */
+    @JSONField(serialize = false)
     public Date getCreateDate() {
         return this.createDate != null ? new Date(this.createDate) : null;
     }
@@ -142,6 +144,7 @@ public class BaseModel implements Serializable {
      * 获取更新时间，返回日期对象
      * @return
      */
+    @JSONField(serialize = false)
     public Date getUpdateDate() {
         return this.updateDate != null ? new Date(this.updateDate) : null;
     }
