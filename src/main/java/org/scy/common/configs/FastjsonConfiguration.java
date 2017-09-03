@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * FastJSON 配置类
  * Created by shicy on 2017/9/1
  */
-//@Configuration
+@Configuration
 public class FastjsonConfiguration {
 
     @Bean
