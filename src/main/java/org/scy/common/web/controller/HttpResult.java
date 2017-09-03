@@ -25,7 +25,7 @@ public class HttpResult {
     public final static int INVALID = 502;
 
     // 错误码
-    private int code = 0;
+    private int code = OK;
 
     // 错误或结果信息
     private String msg = "";

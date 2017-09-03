@@ -60,6 +60,14 @@ public class BaseApplication {
     }
 
     /**
+     * 获取应用程序上下文
+     * @return
+     */
+    public static ApplicationContext getContext() {
+        return context;
+    }
+
+    /**
      * 设置监听器
      * @param application
      */

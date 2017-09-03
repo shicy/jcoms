@@ -2,6 +2,7 @@ package org.scy.common.web.interceptor;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.scy.common.BaseApplication;
 import org.scy.common.annotation.Auth;
 import org.scy.common.configs.AppConfigs;
 import org.scy.common.web.controller.HttpResult;
@@ -27,6 +28,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     // 系统配置信息
     protected AppConfigs configs;
 
+    // Session 管理
+    protected SessionManager sessionManager;
+
     /**
      * 构造方法
      * @param configs
@@ -47,7 +51,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             Method method = ((HandlerMethod)handler).getMethod();
             Class cls = method.getDeclaringClass();
             if (method.isAnnotationPresent(Auth.class) ||  cls.isAnnotationPresent(Auth.class)) {
-                if (!SessionManager.isSessionValidate(request)) {
+                if (!getSessionManager().isSessionValidate(request)) {
                     if (method.isAnnotationPresent(ResponseBody.class) || cls.isAnnotationPresent(ResponseBody.class)) {
                         this.writeWithNoAuth(response);
                     }
@@ -101,4 +105,14 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         response.sendRedirect(redirect);
     }
 
+    /**
+     * 获取 Session 管理器
+     * @return
+     */
+    public SessionManager getSessionManager() {
+        if (sessionManager == null) {
+            sessionManager = BaseApplication.getContext().getBean(SessionManager.class);
+        }
+        return sessionManager;
+    }
 }
