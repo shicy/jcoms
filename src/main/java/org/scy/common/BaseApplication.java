@@ -23,6 +23,7 @@ public class BaseApplication {
     // 当前应用程序实例
     private static SpringApplication application;
 
+    // 当前应用程序上下文
     private static ApplicationContext context;
 
     /**
