@@ -322,6 +322,9 @@ public class DbUpgrade /*extends Thread*/ {
                 if (currentLine == null || "go".equalsIgnoreCase(currentLine) || scripts.size() > 800) {
                     if (scripts.size() > 0) {
                         jdbcTemplate.batchUpdate(scripts.toArray(new String[0]));
+                        for (int i = 0, l = scripts.size(); i < l; i++) {
+                            logger.debug(scripts.get(i));
+                        }
                         scripts.clear();
                     }
                     if (currentLine == null)
