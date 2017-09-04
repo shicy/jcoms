@@ -1,6 +1,6 @@
 package org.scy.common.configs;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,11 +8,17 @@ import org.springframework.stereotype.Component;
  * Created by shicy on 2017/9/3
  */
 @Component
-@ConfigurationProperties(prefix = "app")
+//@ConfigurationProperties(prefix = "app")
 public class AppConfigs {
 
     // 登录地址
+    @Value("${app.loginUrl}")
     private String loginUrl;
+
+    // Session 服务器地址
+    @Value("${app.session-service.url}")
+    private String sessionServiceUrl;
+
 
     /**
      * 获取登录地址
@@ -23,11 +29,11 @@ public class AppConfigs {
     }
 
     /**
-     * 设置登录地址
-     * @param loginUrl
+     * 获取 Session 服务器地址
+     * @return
      */
-    public void setLoginUrl(String loginUrl) {
-        this.loginUrl = loginUrl;
+    public String getSessionServiceUrl() {
+        return sessionServiceUrl;
     }
 
 }
