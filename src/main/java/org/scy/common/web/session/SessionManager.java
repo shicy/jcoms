@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class SessionManager {
 
-    protected final static String TOKEN_KEY = "token";
+    protected final String TOKEN_KEY = "token";
 
     /**
      * 验证当前请求用户是否是登录状态
