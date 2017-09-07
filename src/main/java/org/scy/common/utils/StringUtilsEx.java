@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,8 @@ import java.util.regex.Pattern;
  */
 public abstract class StringUtilsEx {
 
+    private static char[] chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
     /**
      * 过滤文本内容，去除标点符号以及多余空格
      * @param text
@@ -28,6 +31,21 @@ public abstract class StringUtilsEx {
     public static String filterText(String text) {
         if (text == null) return "";
         return text.replaceAll("(?i)[^a-zA-Z0-9\u4E00-\u9FA5\\s]", "").replaceAll("\\s+", " ");
+    }
+
+    /**
+     * 获取随机字符串
+     * @param length
+     * @return
+     */
+    public static String getRandomString(int length) {
+        length = length > 0 ? length : 32;
+        Random random = new Random();
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            str.append(chars[random.nextInt(chars.length)]);
+        }
+        return str.toString();
     }
 
     /**
