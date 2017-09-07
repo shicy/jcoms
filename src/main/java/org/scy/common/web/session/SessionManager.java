@@ -1,6 +1,5 @@
 package org.scy.common.web.session;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -9,7 +8,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class SessionManager {
 
-    protected final String TOKEN_KEY = "token";
+    // 用户唯一编号，一个客户端一个编号
+    public final static ThreadLocal<String> uuid = new ThreadLocal<String>();
+
+    // 用户登录信息
+    public final static ThreadLocal<String> token = new ThreadLocal<String>();
+
+    public final static String TOKEN_KEY = "token";
 
     /**
      * 验证当前请求用户是否是登录状态
@@ -19,20 +24,21 @@ public abstract class SessionManager {
     public abstract boolean isSessionValidate(HttpServletRequest request);
 
     /**
+     * 获取用户唯一编号
+     * @param request
+     * @return
+     */
+    public String getUUID(HttpServletRequest request) {
+        return uuid.get();
+    }
+
+    /**
      * 获取用户 token 信息
      * @param request
      * @return
      */
     public String getToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie: cookies) {
-                if (TOKEN_KEY.equals(cookie.getName())) {
-                    return  cookie.getValue();
-                }
-            }
-        }
-        return null;
+        return token.get();
     }
 
 }
