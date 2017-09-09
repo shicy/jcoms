@@ -289,7 +289,7 @@ public class MapUtilsEx {
 
     /**
      * 将一组对象数组级的查询结果转换成一个Map形列表对象
-     * @param results 查询结果集
+     * @param resultList 查询结果集
      * @param paramNames 转换成Map的属性名，按结果集顺序指定名称
      * @param indexs 对象索引
      * @return

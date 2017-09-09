@@ -75,7 +75,7 @@ public abstract class ValidCodeUtils {
                 ImageIO.write(image, "png", stream);
                 String base64Code = base64Encoder.encode(stream.toByteArray());
                 base64Code = base64Code.replaceAll("\n", "").replaceAll("\r", "");
-                base64Code = URLEncoder.encode(base64Code);
+                base64Code = URLEncoder.encode(base64Code, "utf-8");
                 return "data:image/png;base64," + base64Code;
             }
             catch (IOException e) {
