@@ -7,6 +7,7 @@ import org.scy.common.listener.AppFailedListener;
 import org.scy.common.listener.AppStartListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -125,12 +126,17 @@ public class BaseApplication {
      * 更新数据库
      */
     private void databaseUpgrade() {
-        JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
-        if (jdbcTemplate != null) {
-            String scriptResource = this.getDbScriptResource();
-            if (scriptResource != null) {
-                new DbUpgrade(jdbcTemplate, scriptResource).run();
+        try {
+            JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
+            if (jdbcTemplate != null) {
+                String scriptResource = this.getDbScriptResource();
+                if (scriptResource != null) {
+                    new DbUpgrade(jdbcTemplate, scriptResource).run();
+                }
             }
+        }
+        catch (NoSuchBeanDefinitionException e) {
+            logger.warn(e.toString());
         }
     }
 

@@ -12,7 +12,7 @@ public class JdbcBaseService extends BaseService {
     /**
      * 数据库 Jdbc 操作类
      */
-    @Autowired
+    @Autowired(required = false)
     protected JdbcTemplate jdbcTemplate;
 
 }
