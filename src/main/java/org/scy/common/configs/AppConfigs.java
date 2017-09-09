@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 public class AppConfigs {
 
     // 登录地址
-    @Value("${app.loginUrl}")
+    @Value("${app.loginUrl:null}")
     private String loginUrl;
 
     // Session 服务器地址
-    @Value("${app.session-service.url}")
+    @Value("${app.session-service.url:null}")
     private String sessionServiceUrl;
 
 
