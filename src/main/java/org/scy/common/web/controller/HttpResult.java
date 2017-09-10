@@ -52,12 +52,24 @@ public class HttpResult {
         this.setData(data);
     }
 
+    public static HttpResult ok() {
+        return ok(null);
+    }
+
     public static HttpResult ok(Object data) {
         return new HttpResult(data);
     }
 
+    public static HttpResult error() {
+        return error("服务器错误");
+    }
+
     public static HttpResult error(String msg) {
         return new HttpResult(SERVERERROR, msg);
+    }
+
+    public static HttpResult error(Exception e) {
+        return error(e.toString());
     }
 
     /**
