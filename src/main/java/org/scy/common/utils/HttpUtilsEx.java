@@ -1,5 +1,6 @@
 package org.scy.common.utils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 
@@ -12,7 +13,7 @@ import java.net.URLEncoder;
  * Http 相关工具类
  * Created by hykj on 2017/8/16.
  */
-public class HttpUtilsEx {
+public abstract class HttpUtilsEx {
 
     /**
      * 将一个文件输出到Response，即下载文件
@@ -21,9 +22,10 @@ public class HttpUtilsEx {
      * @param fileName 文件在客户端显示的名称，为空时使用原文件名
      * @throws IOException
      */
-    public static final void writeFileToResponse(HttpServletResponse rep, File file, String fileName) throws IOException {
+    public static void writeFileToResponse(HttpServletResponse rep, File file, String fileName) throws IOException {
         if (fileName == null)
             fileName = file.getName();
+
         //rep.reset();
         rep.setContentType("application/x-msdownload");
         fileName = URLEncoder.encode(fileName, "UTF-8");
@@ -45,10 +47,8 @@ public class HttpUtilsEx {
             out.flush();
         }
         finally {
-            if (in != null)
-                in.close();
-            if (out != null)
-                out.close();
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
         }
     }
 
@@ -58,7 +58,7 @@ public class HttpUtilsEx {
      * @param text
      * @throws IOException
      */
-    public static final void writeTextToResponse(HttpServletResponse rep, String text) throws IOException {
+    public static void writeTextToResponse(HttpServletResponse rep, String text) throws IOException {
         rep.setContentType("text/html;charset=UTF-8");
         rep.setHeader("Cache-Contol", "no-cache");
         rep.setCharacterEncoding("GBK");
@@ -74,7 +74,7 @@ public class HttpUtilsEx {
      * 		json属性名可能也要回双引号。
      * @throws IOException
      */
-    public static final void writeJsonToResponse(HttpServletResponse rep, String json) throws IOException {
+    public static void writeJsonToResponse(HttpServletResponse rep, String json) throws IOException {
         rep.setContentType("application/json;charset=UTF-8"); // 说明以JSON方式输出
         rep.setHeader("Cache-Control", "no-cache");
         rep.setCharacterEncoding("GBK");
@@ -89,7 +89,7 @@ public class HttpUtilsEx {
      * @param doc dom4j
      * @throws IOException
      */
-    public static final void writeDomToResponse(HttpServletResponse rep, Document doc) throws IOException {
+    public static void writeDomToResponse(HttpServletResponse rep, Document doc) throws IOException {
         rep.setContentType("text/xml");
         rep.setHeader("Cache-Control", "no-cache");
         XmlUtilsEx.writeDomToStream(doc, rep.getOutputStream());
@@ -101,63 +101,122 @@ public class HttpUtilsEx {
      * @param key 参数名
      * @return
      */
-    public static final String getRequestString(HttpServletRequest req, String key) {
-        String val = req.getParameter(key);
-        if (val == null)
-            val = (String)req.getAttribute(key);
-        return val;
+    public static String getRequestString(HttpServletRequest req, String key) {
+        return getRequestString(req, key, null);
     }
 
     /**
-     * 获取一个字符串型的请求参数值，先Parameter后Attribute。
+     * 获取一个字符串型的请求参数值。
      * @param req Http请求对象
      * @param key 参数名
-     * @param defaultVal 默认返回值，当参数不存在或值为null时返回该值
+     * @param defaultVal 默认值，当参数不存在或值为null时返回该值
      * @return
      */
-    public static final String getRequestString(HttpServletRequest req, String key, String defaultVal) {
-        String val = getRequestString(req, key);
-        if (val == null)
-            val = defaultVal;
-        return val;
+    public static String getRequestString(HttpServletRequest req, String key, String defaultVal) {
+        String val = req.getParameter(key);
+        return val == null ? defaultVal : val;
     }
 
-    public static final String getRequestStringNoBlank(HttpServletRequest req, String key, String defaultVal) {
-        String val = getRequestString(req, key);
-        if (StringUtils.isBlank(val))
-            val = defaultVal;
-        return val;
+    /**
+     * 获取一个非空白字符串型的请求参数值
+     * @param req Http请求对象
+     * @param key 参数名
+     * @param defaultVal 默认值，当参数不存在或值为null时返回该值
+     * @return
+     */
+    public static String getRequestStringNoBlank(HttpServletRequest req, String key, String defaultVal) {
+        String val = req.getParameter(key);
+        return StringUtils.isBlank(val) ? defaultVal : val;
     }
 
     /**
      * 获取一个整数值，如果该值不存在或无法解析将抛出异常
-     * @param req
-     * @param key
+     * @param req Http请求对象
+     * @param key 参数名
      * @return
      */
-    public static final int getRequestInt(HttpServletRequest req, String key) {
-        try {
-            return Integer.parseInt(req.getParameter(key));
-        }
-        catch (Exception e) {
-            throw new RuntimeException("获取整型参数 " + key + " 失败！");
-        }
+    public static Integer getRequestInt(HttpServletRequest req, String key) {
+        return getRequestInt(req, key, null);
     }
 
     /**
      * 获取一个整数值
      * @param req Http请求对象
      * @param key 参数名
-     * @param defaultVal 默认返回值，当参数不存在或无法解析为整数时返回该值
+     * @param defaultVal 默认值，当参数不存在或无法解析为整数时返回该值
      * @return
      */
-    public static final int getRequestInt(HttpServletRequest req, String key, int defaultVal) {
-        try {
-            return Integer.parseInt(req.getParameter(key));
-        }
-        catch (Exception e) {
+    public static Integer getRequestInt(HttpServletRequest req, String key, Integer defaultVal) {
+        String val = req.getParameter(key);
+        if (StringUtils.isBlank(val))
             return defaultVal;
+        try {
+            return Integer.parseInt(val);
         }
+        catch (NumberFormatException e) {
+            // do nothing
+        }
+        return null;
+    }
+
+    /**
+     * 获取一个长整型数值
+     * @param req Http请求对象
+     * @param key 参数名
+     * @return
+     */
+    public static Long getRequestLong(HttpServletRequest req, String key) {
+        return getRequestLong(req, key, null);
+    }
+
+    /**
+     * 获取一个长整型数值
+     * @param req Http请求对象
+     * @param key 参数名
+     * @param defaultVal 默认值
+     * @return
+     */
+    public static Long getRequestLong(HttpServletRequest req, String key, Long defaultVal) {
+        String val = req.getParameter(key);
+        if (StringUtils.isBlank(val))
+            return defaultVal;
+        try {
+            return Long.parseLong(val);
+        }
+        catch (NumberFormatException e) {
+            // do nothing
+        }
+        return null;
+    }
+
+    /**
+     * 获取一个精度数值
+     * @param req Http请求对象
+     * @param key 参数名
+     * @return
+     */
+    public static Double getRequestDouble(HttpServletRequest req, String key) {
+        return getRequestDouble(req, key, null);
+    }
+
+    /**
+     * 获取一个精度数值
+     * @param req Http请求对象
+     * @param key 参数名
+     * @param defaultVal 默认值
+     * @return
+     */
+    public static Double getRequestDouble(HttpServletRequest req, String key, Double defaultVal) {
+        String val = req.getParameter(key);
+        if (StringUtils.isBlank(val))
+            return defaultVal;
+        try {
+            return Double.parseDouble(val);
+        }
+        catch (NumberFormatException e) {
+            // do nothing
+        }
+        return null;
     }
 
 }
