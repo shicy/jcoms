@@ -17,10 +17,10 @@ public abstract class HttpUtilsEx {
 
     /**
      * 将一个文件输出到Response，即下载文件
-     * @param rep
-     * @param file
+     * @param rep Http响应对象
+     * @param file 想要写入的文件
      * @param fileName 文件在客户端显示的名称，为空时使用原文件名
-     * @throws IOException
+     * @throws IOException 写入异常
      */
     public static void writeFileToResponse(HttpServletResponse rep, File file, String fileName) throws IOException {
         if (fileName == null)
@@ -54,9 +54,9 @@ public abstract class HttpUtilsEx {
 
     /**
      * 将一个文本字符串输出到Response
-     * @param rep
-     * @param text
-     * @throws IOException
+     * @param rep Http响应对象
+     * @param text 想要写入的文本信息
+     * @throws IOException 写入异常
      */
     public static void writeTextToResponse(HttpServletResponse rep, String text) throws IOException {
         rep.setContentType("text/html;charset=UTF-8");
@@ -69,10 +69,10 @@ public abstract class HttpUtilsEx {
 
     /**
      * 将一个JSON字符串输出到Response
-     * @param rep
+     * @param rep Http响应对象
      * @param json 如：“[{id: "id1", data: [{val: "value"}]},{id: "id2"}]”，根据版本的不同
      * 		json属性名可能也要回双引号。
-     * @throws IOException
+     * @throws IOException 写入异常
      */
     public static void writeJsonToResponse(HttpServletResponse rep, String json) throws IOException {
         rep.setContentType("application/json;charset=UTF-8"); // 说明以JSON方式输出
@@ -85,9 +85,9 @@ public abstract class HttpUtilsEx {
 
     /**
      * 将一个基于DOM4J的Doc文档输出到Response
-     * @param rep
+     * @param rep Http响应对象
      * @param doc dom4j
-     * @throws IOException
+     * @throws IOException 写入异常
      */
     public static void writeDomToResponse(HttpServletResponse rep, Document doc) throws IOException {
         rep.setContentType("text/xml");
@@ -99,10 +99,10 @@ public abstract class HttpUtilsEx {
      * 获取一个字符串型的请求参数值，先Parameter后Attribute。
      * @param req Http请求对象
      * @param key 参数名
-     * @return
+     * @return 参数值
      */
-    public static String getRequestString(HttpServletRequest req, String key) {
-        return getRequestString(req, key, null);
+    public static String getStringValue(HttpServletRequest req, String key) {
+        return getStringValue(req, key, null);
     }
 
     /**
@@ -110,9 +110,9 @@ public abstract class HttpUtilsEx {
      * @param req Http请求对象
      * @param key 参数名
      * @param defaultVal 默认值，当参数不存在或值为null时返回该值
-     * @return
+     * @return 参数值
      */
-    public static String getRequestString(HttpServletRequest req, String key, String defaultVal) {
+    public static String getStringValue(HttpServletRequest req, String key, String defaultVal) {
         String val = req.getParameter(key);
         return val == null ? defaultVal : val;
     }
@@ -122,9 +122,9 @@ public abstract class HttpUtilsEx {
      * @param req Http请求对象
      * @param key 参数名
      * @param defaultVal 默认值，当参数不存在或值为null时返回该值
-     * @return
+     * @return 参数值
      */
-    public static String getRequestStringNoBlank(HttpServletRequest req, String key, String defaultVal) {
+    public static String getStringValueNotBlank(HttpServletRequest req, String key, String defaultVal) {
         String val = req.getParameter(key);
         return StringUtils.isBlank(val) ? defaultVal : val;
     }
@@ -133,10 +133,10 @@ public abstract class HttpUtilsEx {
      * 获取一个整数值，如果该值不存在或无法解析将抛出异常
      * @param req Http请求对象
      * @param key 参数名
-     * @return
+     * @return 参数值
      */
-    public static Integer getRequestInt(HttpServletRequest req, String key) {
-        return getRequestInt(req, key, null);
+    public static Integer getIntValue(HttpServletRequest req, String key) {
+        return getIntValue(req, key, null);
     }
 
     /**
@@ -144,9 +144,9 @@ public abstract class HttpUtilsEx {
      * @param req Http请求对象
      * @param key 参数名
      * @param defaultVal 默认值，当参数不存在或无法解析为整数时返回该值
-     * @return
+     * @return 参数值
      */
-    public static Integer getRequestInt(HttpServletRequest req, String key, Integer defaultVal) {
+    public static Integer getIntValue(HttpServletRequest req, String key, Integer defaultVal) {
         String val = req.getParameter(key);
         if (StringUtils.isBlank(val))
             return defaultVal;
@@ -156,17 +156,17 @@ public abstract class HttpUtilsEx {
         catch (NumberFormatException e) {
             // do nothing
         }
-        return null;
+        return defaultVal;
     }
 
     /**
      * 获取一个长整型数值
      * @param req Http请求对象
      * @param key 参数名
-     * @return
+     * @return 参数值
      */
-    public static Long getRequestLong(HttpServletRequest req, String key) {
-        return getRequestLong(req, key, null);
+    public static Long getLongValue(HttpServletRequest req, String key) {
+        return getLongValue(req, key, null);
     }
 
     /**
@@ -174,9 +174,9 @@ public abstract class HttpUtilsEx {
      * @param req Http请求对象
      * @param key 参数名
      * @param defaultVal 默认值
-     * @return
+     * @return 参数值
      */
-    public static Long getRequestLong(HttpServletRequest req, String key, Long defaultVal) {
+    public static Long getLongValue(HttpServletRequest req, String key, Long defaultVal) {
         String val = req.getParameter(key);
         if (StringUtils.isBlank(val))
             return defaultVal;
@@ -186,17 +186,17 @@ public abstract class HttpUtilsEx {
         catch (NumberFormatException e) {
             // do nothing
         }
-        return null;
+        return defaultVal;
     }
 
     /**
      * 获取一个精度数值
      * @param req Http请求对象
      * @param key 参数名
-     * @return
+     * @return 参数值
      */
-    public static Double getRequestDouble(HttpServletRequest req, String key) {
-        return getRequestDouble(req, key, null);
+    public static Double getDoubleValue(HttpServletRequest req, String key) {
+        return getDoubleValue(req, key, null);
     }
 
     /**
@@ -204,9 +204,9 @@ public abstract class HttpUtilsEx {
      * @param req Http请求对象
      * @param key 参数名
      * @param defaultVal 默认值
-     * @return
+     * @return 参数值
      */
-    public static Double getRequestDouble(HttpServletRequest req, String key, Double defaultVal) {
+    public static Double getDoubleValue(HttpServletRequest req, String key, Double defaultVal) {
         String val = req.getParameter(key);
         if (StringUtils.isBlank(val))
             return defaultVal;
@@ -216,7 +216,17 @@ public abstract class HttpUtilsEx {
         catch (NumberFormatException e) {
             // do nothing
         }
-        return null;
+        return defaultVal;
+    }
+
+    /**
+     * 获取多值参数
+     * @param req Http请求对象
+     * @param key 参数名
+     * @return 参数值
+     */
+    public static String[] getStringValues(HttpServletRequest req, String key) {
+        return req.getParameterValues(key);
     }
 
 }
