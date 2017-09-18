@@ -1,4 +1,4 @@
-package org.scy.common.listener;
+package org.scy.common.web.listener;
 
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;

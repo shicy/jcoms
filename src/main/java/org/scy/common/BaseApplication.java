@@ -1,10 +1,10 @@
 package org.scy.common;
 
 import org.scy.common.ds.DbUpgrade;
-import org.scy.common.listener.AppContextListener;
-import org.scy.common.listener.AppEnvironmentListener;
-import org.scy.common.listener.AppFailedListener;
-import org.scy.common.listener.AppStartListener;
+import org.scy.common.web.listener.AppContextListener;
+import org.scy.common.web.listener.AppEnvironmentListener;
+import org.scy.common.web.listener.AppFailedListener;
+import org.scy.common.web.listener.AppStartListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
