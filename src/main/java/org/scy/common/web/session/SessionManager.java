@@ -39,7 +39,7 @@ public final class SessionManager {
      */
     public static SessionManager getInstance() {
         if (sessionManager == null) {
-            synchronized (sessionManager) {
+            synchronized (SessionManager.class) {
                 if (sessionManager == null)
                     sessionManager = new SessionManager();
             }
