@@ -20,7 +20,7 @@ public class SchedulerManager {
     private static SchedulerManager schedulerManager;
 
     /**
-     * 私有构造方法，单例模式，请使用{@SchedulerManager#getInstance()}方法获取实例对象
+     * 私有构造方法，单例模式，请使用{@link #getInstance()}方法获取实例对象
      */
     private SchedulerManager() {
         try {
@@ -36,16 +36,38 @@ public class SchedulerManager {
 
     /**
      * 获取定时器管理对象实例
-     * @return
      */
-    public SchedulerManager getInstance() {
+    public static SchedulerManager getInstance() {
         if (schedulerManager == null) {
-            synchronized (schedulerManager) {
+            synchronized (SchedulerManager.class) {
                 if (schedulerManager == null)
                     schedulerManager = new SchedulerManager();
             }
         }
         return schedulerManager;
+    }
+
+    /**
+     * 新建一个 Cron 表达式触发器
+     * @param cronExpression Cron 表达式
+     * @return Cron 类型触发器
+     */
+    public static Trigger newCronTrigger(String cronExpression) {
+        return newCronTrigger(cronExpression, false);
+    }
+
+    /**
+     * 新建一个 Cron 表达式触发器
+     * @param cronExpression Cron 表达式
+     * @param startNow 是否立即执行
+     * @return Cron 类型触发器
+     */
+    public static Trigger newCronTrigger(String cronExpression, boolean startNow) {
+        TriggerBuilder triggerBuilder = TriggerBuilder.newTrigger();
+        triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression));
+        if (startNow)
+            triggerBuilder.startNow();
+        return triggerBuilder.build();
     }
 
     /**
@@ -98,18 +120,20 @@ public class SchedulerManager {
     public abstract static class MyJob implements Job {
 
         /**
-         * 新建一个 Cron 表达式触发器
-         * @param cronExpression Cron 表达式
-         * @param startNow 是否立即执行
-         * @return Cron 类型触发器
+         * 任务开始执行
+         * @param jobExecutionContext 上下文
+         * @throws JobExecutionException 执行异常
          */
-        public static Trigger newCronTrigger(String cronExpression, boolean startNow) {
-            TriggerBuilder triggerBuilder = TriggerBuilder.newTrigger();
-            triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression));
-            if (startNow)
-                triggerBuilder.startNow();
-            return triggerBuilder.build();
+        public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+            this.executeJob(jobExecutionContext.getJobDetail().getJobDataMap());
         }
+
+        /**
+         * 定时任务执行方法，将在独立线程中运行
+         * @param data 当前任务数据集
+         * @throws JobExecutionException 异常信息
+         */
+        protected abstract void executeJob(JobDataMap data) throws JobExecutionException;
 
     }
 
@@ -118,12 +142,19 @@ public class SchedulerManager {
      */
     public abstract static class ThreadJob extends MyJob implements Runnable {
 
-        protected Logger logger = LoggerFactory.getLogger(this.getClass());
+        private Logger logger = LoggerFactory.getLogger(ThreadJob.class);
 
+        // 执行任务时的上下文对象
         protected JobExecutionContext context;
 
+        // 当前执行线程对象
         private Thread currentThread;
 
+        /**
+         * 任务开始执行
+         * @param jobExecutionContext 上下文
+         * @throws JobExecutionException 执行异常
+         */
         public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
             this.context = jobExecutionContext;
             if (!this.isRunning()) {
@@ -132,6 +163,9 @@ public class SchedulerManager {
             }
         }
 
+        /**
+         * 在独立线程中运行
+         */
         public final void run() {
             try {
                 this.executeJob(context.getJobDetail().getJobDataMap());
@@ -143,18 +177,12 @@ public class SchedulerManager {
         }
 
         /**
-         * 定时任务执行方法，将在独立线程中运行
-         * @param data 当前任务数据集
-         * @throws JobExecutionException 异常信息
-         */
-        protected abstract void executeJob(JobDataMap data) throws JobExecutionException;
-
-        /**
          * 判断当前任务是否正在执行
          */
-        protected boolean isRunning() {
+        private boolean isRunning() {
             return currentThread != null && currentThread.isAlive();
         }
+
     }
 
 }
