@@ -69,7 +69,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
      * @param response
      */
     private void writeWithNoAuth(HttpServletResponse response) throws Exception {
-        response.setCharacterEncoding("utf-8");
+        response.setContentType("application/json;charset=utf-8");
         PrintWriter writer = null;
         try {
             writer = response.getWriter();
