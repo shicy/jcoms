@@ -12,7 +12,7 @@ import java.io.*;
  */
 public class ValidCodeUtilsTest {
 
-    @Test
+//    @Test
     public void testSaveToFiel() {
         String code = ValidCodeUtils.getCode(4);
         BufferedImage image = ValidCodeUtils.getCodeImage(code);

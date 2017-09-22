@@ -18,7 +18,7 @@ public class FileUtilsExTest {
     /**
      * 外部资源文件
      */
-    @Test
+//    @Test
     public void testGetResourceFile() {
         String fileName = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
         File file = FileUtilsEx.getResourceFile(fileName);
@@ -29,7 +29,7 @@ public class FileUtilsExTest {
     /**
      * jar 包内资源文件（不能获取）
      */
-    @Test
+//    @Test
     public void testGetResourceFile2() {
         String fileName = "LICENSE-junit.txt";
         File file = FileUtilsEx.getResourceFile(fileName);
@@ -39,7 +39,7 @@ public class FileUtilsExTest {
     /**
      * 外部资源文件流
      */
-    @Test
+//    @Test
     public void testGetResourceInputStream() {
         String fileName = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
         InputStream stream = FileUtilsEx.getResourceStream(fileName);
@@ -55,7 +55,7 @@ public class FileUtilsExTest {
     /**
      * jar 包内资源文件流（可以获取）
      */
-    @Test
+//    @Test
     public void testGetResourceInputStream2() {
         String fileName = "LICENSE-junit.txt";
         InputStream stream = FileUtilsEx.getResourceStream(fileName);
@@ -71,7 +71,7 @@ public class FileUtilsExTest {
     /**
      * 批量获取资源文件（不能获取 jar 包内资源文件, 忽略不存在的文件）
      */
-    @Test
+//    @Test
     public void testGetResourceFiles() {
         String[] fileNames = new String [5];
         fileNames[0] = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
@@ -88,7 +88,7 @@ public class FileUtilsExTest {
     /**
      * 批量获取资源文件（可以获取 jar 包内资源文件, 忽略不存在的文件）
      */
-    @Test
+//    @Test
     public void testGetResourceFiles2() {
         String[] fileNames = new String [5];
         fileNames[0] = "org/scy/common/test/scripts/[1.0.0]base_v1.0.sql";
@@ -105,7 +105,7 @@ public class FileUtilsExTest {
     /**
      * 按目录获取的资源文件
      */
-    @Test
+//    @Test
     public void testGetResourceFilesWithDir() {
         String fileDir = "org/scy/common/test";
         URL[] resources = FileUtilsEx.getResources(fileDir);
@@ -115,7 +115,7 @@ public class FileUtilsExTest {
     /**
      * 按目录获取 jar 包内文件
      */
-    @Test
+//    @Test
     public void testGetResourceFilesWithDir2() {
         String fileDir = "org/junit/rules";
         fileDir = "META-INF/maven/com.alibaba";
@@ -150,7 +150,7 @@ public class FileUtilsExTest {
         }
     }
 
-    @Test
+//    @Test
     public void myTest() {
         String fileName = "a/b/c/d";
         String[] names = fileName.split(File.separator);

@@ -12,15 +12,15 @@ import org.springframework.test.context.junit4.SpringRunner;
  * 数据库更新测试
  * Created by shicy on 2017/6/9.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@Import({TestDataSourceBeanDefinition.class})
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@Import({TestDataSourceBeanDefinition.class})
 public class DbUpgradeTest {
 
-    @Autowired
+//    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Test
+//    @Test
     public void doTest() {
         DbUpgrade upgrade = new DbUpgrade(jdbcTemplate, "org/scy/common/test/scripts");
         upgrade.setListener(new DbUpgrade.DbUpgradeListener() {
