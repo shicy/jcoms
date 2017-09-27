@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * MVC 框架配置
  */
 @Configuration
+@SuppressWarnings("unused")
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired

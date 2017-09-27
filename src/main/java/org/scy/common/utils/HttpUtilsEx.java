@@ -59,9 +59,8 @@ public abstract class HttpUtilsEx {
      * @throws IOException 写入异常
      */
     public static void writeTextToResponse(HttpServletResponse rep, String text) throws IOException {
-        rep.setContentType("text/html;charset=UTF-8");
+        rep.setContentType("text/html;charset=utf-8");
         rep.setHeader("Cache-Contol", "no-cache");
-        rep.setCharacterEncoding("GBK");
         PrintWriter pw = rep.getWriter();
         pw.write(text);
         pw.flush();
@@ -75,9 +74,8 @@ public abstract class HttpUtilsEx {
      * @throws IOException 写入异常
      */
     public static void writeJsonToResponse(HttpServletResponse rep, String json) throws IOException {
-        rep.setContentType("application/json;charset=UTF-8"); // 说明以JSON方式输出
+        rep.setContentType("application/json;charset=utf-8"); // 说明以JSON方式输出
         rep.setHeader("Cache-Control", "no-cache");
-        rep.setCharacterEncoding("GBK");
         PrintWriter pw = rep.getWriter();
         pw.write(json);
         pw.flush();
