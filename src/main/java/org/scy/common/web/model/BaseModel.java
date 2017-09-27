@@ -10,6 +10,7 @@ import java.util.Date;
  * 模型基类，包含：id, createdDate, updatedDate, saasId
  * Created by shicy on 2017/5/11.
  */
+@SuppressWarnings("unused")
 public class BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1002017051100000000L;
@@ -37,7 +38,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取模型编号
-     * @return
      */
     public int getId() {
         return this.id;
@@ -45,7 +45,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置模型编号
-     * @param id
      */
     public void setId(int id) {
         this.id = id;
@@ -53,7 +52,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取状态
-     * @return
      */
     public short getState() {
         return this.state;
@@ -61,7 +59,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置状态
-     * @param state
      */
     public void setState(short state) {
         this.state = state;
@@ -69,7 +66,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取创建用户编号
-     * @return
      */
     public int getCreatorId() {
         return this.creatorId;
@@ -77,7 +73,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置创建用户编号
-     * @param creatorId
      */
     public void setCreatorId(int creatorId) {
         this.creatorId = creatorId;
@@ -85,7 +80,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取更新用户编号
-     * @return
      */
     public int getUpdatorId() {
         return this.updatorId;
@@ -93,7 +87,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置更新用户编号
-     * @param updatorId
      */
     public void setUpdatorId(int updatorId) {
         this.updatorId = updatorId;
@@ -101,7 +94,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取创建时间，返回时间戳
-     * @return
      */
     public Long getCreateTime() {
         return this.createDate;
@@ -109,7 +101,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取创建时间，返回日期对象
-     * @return
      */
     @JSONField(serialize = false)
     public Date getCreateDate() {
@@ -118,7 +109,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置创建时间
-     * @param createDate
      */
     public void setCreateTime(Long createDate) {
         this.createDate = createDate;
@@ -126,7 +116,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置创建时间
-     * @param createDate
      */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate != null ? createDate.getTime() : null;
@@ -134,7 +123,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取更新时间，返回时间戳
-     * @return
      */
     public Long getUpdateTime() {
         return this.updateDate;
@@ -142,7 +130,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取更新时间，返回日期对象
-     * @return
      */
     @JSONField(serialize = false)
     public Date getUpdateDate() {
@@ -151,7 +138,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置更新时间
-     * @param updateDate
      */
     public void setUpdateTime(Long updateDate) {
         this.updateDate = updateDate > 0 ? updateDate : null;
@@ -159,7 +145,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置更新时间
-     * @param updateDate
      */
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate != null ? updateDate.getTime() : null;
@@ -167,7 +152,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 获取平台租户编号
-     * @return
      */
     public int getPaasId() {
         return this.paasId;
@@ -175,7 +159,6 @@ public class BaseModel implements Serializable {
 
     /**
      * 设置平台租户编号
-     * @param paasId
      */
     public void setPaasId(int paasId) {
         this.paasId = paasId;

@@ -12,4 +12,10 @@ public final class Const {
     // 无效
     public final static short DISABLED = 0;
 
+    // 参数错误
+    public final static short MSG_CODE_PARAMINVALID  = 1000;
+
+    // 参数缺失
+    public final static short MSG_CODE_PARAMMISSING = 1001;
+
 }

@@ -65,7 +65,11 @@ public class HttpResult {
     }
 
     public static HttpResult error(String msg) {
-        return new HttpResult(SERVERERROR, msg);
+        return error(SERVERERROR, msg);
+    }
+
+    public static HttpResult error(int code, String msg) {
+        return new HttpResult(code, msg);
     }
 
     public static HttpResult error(Exception e) {
