@@ -25,13 +25,13 @@ public class BaseModel implements Serializable {
     private int creatorId;
 
     // 创建时间，时间戳：毫秒
-    private Long createDate;
+    private Long createTime;
 
     // 最后更新用户编号
     private int updatorId;
 
     // 最后更新时间，时间戳：毫秒
-    private Long updateDate;
+    private Long updateTime;
 
     // 平台租户编号
     private int paasId;
@@ -96,7 +96,14 @@ public class BaseModel implements Serializable {
      * 获取创建时间，返回时间戳
      */
     public Long getCreateTime() {
-        return this.createDate;
+        return this.createTime;
+    }
+
+    /**
+     * 设置创建时间
+     */
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
     }
 
     /**
@@ -104,28 +111,28 @@ public class BaseModel implements Serializable {
      */
     @JSONField(serialize = false)
     public Date getCreateDate() {
-        return this.createDate != null ? new Date(this.createDate) : null;
-    }
-
-    /**
-     * 设置创建时间
-     */
-    public void setCreateTime(Long createDate) {
-        this.createDate = createDate;
+        return this.createTime != null ? new Date(this.createTime) : null;
     }
 
     /**
      * 设置创建时间
      */
     public void setCreateDate(Date createDate) {
-        this.createDate = createDate != null ? createDate.getTime() : null;
+        this.createTime = createDate != null ? createDate.getTime() : null;
     }
 
     /**
      * 获取更新时间，返回时间戳
      */
     public Long getUpdateTime() {
-        return this.updateDate;
+        return this.updateTime;
+    }
+
+    /**
+     * 设置更新时间
+     */
+    public void setUpdateTime(Long updateTime) {
+        this.updateTime = updateTime > 0 ? updateTime : null;
     }
 
     /**
@@ -133,21 +140,14 @@ public class BaseModel implements Serializable {
      */
     @JSONField(serialize = false)
     public Date getUpdateDate() {
-        return this.updateDate != null ? new Date(this.updateDate) : null;
-    }
-
-    /**
-     * 设置更新时间
-     */
-    public void setUpdateTime(Long updateDate) {
-        this.updateDate = updateDate > 0 ? updateDate : null;
+        return this.updateTime != null ? new Date(this.updateTime) : null;
     }
 
     /**
      * 设置更新时间
      */
     public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate != null ? updateDate.getTime() : null;
+        this.updateTime = updateDate != null ? updateDate.getTime() : null;
     }
 
     /**
