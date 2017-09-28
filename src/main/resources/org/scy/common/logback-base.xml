@@ -70,6 +70,8 @@
     <logger name="org.springframework.boot.context" level="info"/>
     <logger name="org.hibernate.validator" level="error"/>
     <logger name="org.quartz" level="error"/>
+    <logger name="org.mybatis.spring" level="info"/>
+    <logger name="com.netflix.hystrix" level="info"/>
 
     <logger name="org.scy.common.ds.DbUpgrade" level="debug" additivity="false">
         <appender-ref ref="sql_script" />
