@@ -3,10 +3,14 @@ package org.scy.common.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  * HTTP请求结果对象
  * Created by shicy on 2017/9/2
  */
+@SuppressWarnings("unused")
 public class HttpResult {
 
     // 成功
@@ -23,6 +27,8 @@ public class HttpResult {
     public final static int SERVERERROR = 500;
     // 请求失效
     public final static int INVALID = 502;
+
+    private static ResourceBundle resource = null;
 
     // 错误码
     private int code = OK;
@@ -61,7 +67,11 @@ public class HttpResult {
     }
 
     public static HttpResult error() {
-        return error("服务器错误");
+        return error(SERVERERROR);
+    }
+
+    public static HttpResult error(int code) {
+        return error(code, getResourceMessage(code));
     }
 
     public static HttpResult error(String msg) {
@@ -78,7 +88,6 @@ public class HttpResult {
 
     /**
      * 转换为 JSON 字符串
-     * @return
      */
     @JSONField(serialize = false)
     public String toJSON() {
@@ -107,6 +116,33 @@ public class HttpResult {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    /**
+     * 获取配置资源文件消息
+     * @param code 消息编码
+     */
+    public static String  getResourceMessage(int code) {
+        return getResourceMessage(code, "");
+    }
+
+    /**
+     * 获取配置资源文件消息
+     * @param code 消息编码
+     * @param defVal 默认值
+     */
+    public static String getResourceMessage(int code, String defVal) {
+        if (resource == null) {
+            Locale locale = Locale.getDefault();
+            resource = ResourceBundle.getBundle("message", locale);
+        }
+
+        if (resource != null) {
+            String value = resource.getString("" + code);
+            return value == null ? defVal : value;
+        }
+
+        return defVal;
     }
 
 }
