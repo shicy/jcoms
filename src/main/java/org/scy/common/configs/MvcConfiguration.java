@@ -1,5 +1,6 @@
 package org.scy.common.configs;
 
+import org.scy.common.web.interceptor.ErrorInterceptor;
 import org.scy.common.web.interceptor.LoginInterceptor;
 import org.scy.common.web.interceptor.SessionInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
+
+        // 异常拦截器(包含 404 500 等状态异常)
+        registry.addInterceptor(new ErrorInterceptor(configs)).addPathPatterns("/**");
 
         // Session拦截器
         registry.addInterceptor(new SessionInterceptor(configs)).addPathPatterns("/**");
