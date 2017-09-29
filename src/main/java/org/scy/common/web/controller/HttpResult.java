@@ -2,15 +2,18 @@ package org.scy.common.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import org.apache.commons.lang3.StringUtils;
+import org.scy.common.utils.MapUtilsEx;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
  * HTTP请求结果对象
  * Created by shicy on 2017/9/2
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "unchecked"})
 public class HttpResult {
 
     // 成功
@@ -67,7 +70,7 @@ public class HttpResult {
     }
 
     public static HttpResult error() {
-        return error(SERVERERROR);
+        return error(SERVERERROR, getResourceMessage(SERVERERROR, "服务器错误"));
     }
 
     public static HttpResult error(int code) {
@@ -83,7 +86,7 @@ public class HttpResult {
     }
 
     public static HttpResult error(Exception e) {
-        return error(e.toString());
+        return error(e.getMessage());
     }
 
     /**
@@ -119,10 +122,21 @@ public class HttpResult {
     }
 
     /**
+     * 获取对象实例
+     */
+    @JSONField(serialize = false)
+    public <T> T getData(Class<T> entityCls) {
+        if (data == null)
+            return null;
+        Map<String, Object> map = (Map<String, Object>)data;
+        return MapUtilsEx.parseFromMap(map, entityCls);
+    }
+
+    /**
      * 获取配置资源文件消息
      * @param code 消息编码
      */
-    public static String  getResourceMessage(int code) {
+    private static String  getResourceMessage(int code) {
         return getResourceMessage(code, "");
     }
 
@@ -131,7 +145,7 @@ public class HttpResult {
      * @param code 消息编码
      * @param defVal 默认值
      */
-    public static String getResourceMessage(int code, String defVal) {
+    private static String getResourceMessage(int code, String defVal) {
         if (resource == null) {
             Locale locale = Locale.getDefault();
             resource = ResourceBundle.getBundle("message", locale);
@@ -139,7 +153,8 @@ public class HttpResult {
 
         if (resource != null) {
             String value = resource.getString("" + code);
-            return value == null ? defVal : value;
+            if (StringUtils.isNotBlank(value))
+                return value;
         }
 
         return defVal;
