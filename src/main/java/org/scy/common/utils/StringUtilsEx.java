@@ -19,14 +19,13 @@ import java.util.regex.Pattern;
  * 字符串处理公共方法，是{@link org.apache.commons.lang3.StringUtils}的扩展
  * Created by hykj on 2017/8/15.
  */
+@SuppressWarnings("unused")
 public abstract class StringUtilsEx {
 
     private static char[] chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     /**
      * 过滤文本内容，去除标点符号以及多余空格
-     * @param text
-     * @return
      */
     public static String filterText(String text) {
         if (text == null) return "";
@@ -35,8 +34,6 @@ public abstract class StringUtilsEx {
 
     /**
      * 获取随机字符串
-     * @param length
-     * @return
      */
     public static String getRandomString(int length) {
         length = length > 0 ? length : 32;
@@ -50,9 +47,6 @@ public abstract class StringUtilsEx {
 
     /**
      * 连接一个int[]为字符串
-     * @param array
-     * @param separator
-     * @return
      */
     public static String join(int[] array, String separator) {
         if (array == null)
@@ -70,9 +64,6 @@ public abstract class StringUtilsEx {
 
     /**
      * 连接一个short[]为字符串
-     * @param array
-     * @param separator
-     * @return
      */
     public static String join(short[] array, String separator) {
         if (array == null)
@@ -90,9 +81,6 @@ public abstract class StringUtilsEx {
 
     /**
      * 连接一个String[]为字符串
-     * @param array
-     * @param separator
-     * @return
      */
     public static String join(String[] array, String separator) {
         if (array == null)
@@ -129,7 +117,6 @@ public abstract class StringUtilsEx {
      * 拆分一个整数字符串
      * @param str 如：12,32,43,33
      * @param separator 分隔符
-     * @return
      */
     public static int[] splitAsIntValue(String str, String separator) {
         if (StringUtils.isBlank(str))
@@ -140,8 +127,6 @@ public abstract class StringUtilsEx {
 
     /**
      * 提取一个字符串中的数据信息
-     * @param str
-     * @return
      */
     public static double[] splitNumbers(String str) {
         if (StringUtils.isBlank(str))
@@ -164,8 +149,6 @@ public abstract class StringUtilsEx {
 
     /**
      * 将字符串的分隔符转换为标准文件分隔符
-     * @param str
-     * @return
      */
     public static String tranToFileSeparator(String str) {
         if (StringUtils.isBlank(str))
