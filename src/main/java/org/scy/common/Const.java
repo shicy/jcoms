@@ -19,6 +19,9 @@ public final class Const {
     // 参数缺失
     public final static short MSG_CODE_PARAMMISSING = 1001;
 
+    // 服务拒绝访问或连接失败
+    public final static short MSG_CODE_SERVERREFUSED = 1010;
+
     // 当前帐户错误，不存在或密码错误
     public final static short MSG_CODE_ACCOUNTERROR = 1100;
 
