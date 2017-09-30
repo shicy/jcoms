@@ -1,5 +1,6 @@
 package org.scy.common.configs;
 
+import org.scy.common.web.interceptor.AccessTokenInterceptor;
 import org.scy.common.web.interceptor.ErrorInterceptor;
 import org.scy.common.web.interceptor.LoginInterceptor;
 import org.scy.common.web.interceptor.SessionInterceptor;
@@ -27,6 +28,8 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
         // Session拦截器
         registry.addInterceptor(new SessionInterceptor(configs)).addPathPatterns("/**");
+
+        registry.addInterceptor(new AccessTokenInterceptor(configs)).addPathPatterns("/**");
 
         // 登录验证拦截器
         registry.addInterceptor(new LoginInterceptor(configs)).addPathPatterns("/**");
