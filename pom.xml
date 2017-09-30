@@ -124,6 +124,17 @@
             <version>4.2.0.RELEASE</version>
         </dependency>
 
+        <!-- FeignClient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.feign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+            <version>8.18.0</version>
+        </dependency>
+
         <!-- starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
