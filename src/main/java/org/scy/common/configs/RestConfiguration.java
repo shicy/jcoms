@@ -1,5 +1,9 @@
 package org.scy.common.configs;
 
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import org.apache.commons.lang3.StringUtils;
+import org.scy.common.web.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +22,7 @@ import java.util.List;
  * Created by shicy on 2017/9/8.
  */
 @Configuration
+@SuppressWarnings("unused")
 public class RestConfiguration {
 
     @Bean
@@ -41,5 +46,19 @@ public class RestConfiguration {
         messageConverters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
 
         return restTemplate;
+    }
+
+    /**
+     * 访问远程服务接口时，带上 AccessToken 头部信息
+     */
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return new RequestInterceptor() {
+            public void apply(RequestTemplate requestTemplate) {
+                String accessToken = SessionManager.accessToken.get();
+                if (StringUtils.isNotBlank(accessToken))
+                    requestTemplate.header(SessionManager.ACCESS_TOKEN_KEY, accessToken);
+            }
+        };
     }
 }
