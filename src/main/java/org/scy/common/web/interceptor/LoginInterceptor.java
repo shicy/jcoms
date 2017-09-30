@@ -6,7 +6,6 @@ import org.scy.common.configs.AppConfigs;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.common.web.session.SessionManager;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -20,7 +19,6 @@ import java.net.URLEncoder;
  * 登录拦截器
  * Created by shicy on 2017/9/2
  */
-@Component
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     // 系统配置信息
@@ -45,7 +43,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             Method method = ((HandlerMethod)handler).getMethod();
             Class cls = method.getDeclaringClass();
             if (method.isAnnotationPresent(Auth.class) ||  cls.isAnnotationPresent(Auth.class)) {
-                if (!getSessionManager().isSessionValidate(request)) {
+                if (!SessionManager.isSessionValidate()) {
                     if (method.isAnnotationPresent(ResponseBody.class) || cls.isAnnotationPresent(ResponseBody.class)) {
                         this.writeWithNoAuth(response);
                     }
@@ -85,13 +83,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         redirect += "?r=" + URLEncoder.encode(currentUrl, "utf-8");
 
         response.sendRedirect(redirect);
-    }
-
-    /**
-     * 获取 Session 管理器
-     */
-    private SessionManager getSessionManager() {
-        return SessionManager.getInstance();
     }
 
 }

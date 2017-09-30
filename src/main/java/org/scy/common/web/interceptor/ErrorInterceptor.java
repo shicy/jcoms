@@ -11,17 +11,17 @@ import javax.servlet.http.HttpServletResponse;
  * 异常、错误拦截器
  * Created by shicy on 2017/9/29.
  */
-//@Component
+@SuppressWarnings("unused")
 public class ErrorInterceptor extends HandlerInterceptorAdapter {
 
     // 系统配置信息
-    private AppConfigs appConfigs;
+//    private AppConfigs appConfigs;
 
     /**
      * 构造方法
      */
     public ErrorInterceptor(AppConfigs appConfigs) {
-        this.appConfigs = appConfigs;
+//        this.appConfigs = appConfigs;
     }
 
     @Override

@@ -13,17 +13,17 @@ import javax.servlet.http.HttpServletResponse;
  * 用户 Session 相关连接器
  * Created by shicy on 2017/9/7.
  */
+@SuppressWarnings("unused")
 public class SessionInterceptor extends HandlerInterceptorAdapter {
 
     // 配置参数
-    protected AppConfigs configs;
+//    protected AppConfigs configs;
 
     /**
      * 构造方法
-     * @param configs
      */
     public SessionInterceptor(AppConfigs configs) {
-        this.configs = configs;
+//        this.configs = configs;
     }
 
     @Override
