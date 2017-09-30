@@ -1,14 +1,18 @@
 package org.scy.common.web.session;
 
+import org.apache.commons.lang3.StringUtils;
+import org.scy.common.web.controller.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.RestOperations;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.PostConstruct;
 
 /**
  * Session 管理类
  * Created by shicy on 2017/9/3
  */
+@Component
+@SuppressWarnings("unused")
 public final class SessionManager {
 
     // 用户唯一编号，一个客户端一个编号
@@ -17,63 +21,59 @@ public final class SessionManager {
     // 用户登录信息
     public final static ThreadLocal<String> token = new ThreadLocal<String>();
 
+    // 接口访问权限口令
+    public final static ThreadLocal<String> accessToken = new ThreadLocal<String>();
+
     // Token 属性名称
     public final static String TOKEN_KEY = "token";
 
-    @Autowired
-    private RestOperations restOperations;
+    // AccessToken 属性名称
+    public final static String ACCESS_TOKEN_KEY = "X-Access-Token";
 
-    private static SessionManager sessionManager;
+    private static SessionClient sessionClient;
 
-    /**
-     * 构造方法，
-     * 单例，请通过 Session.getInstance() 获取实例
-     */
-    private SessionManager() {
-        // do nothing
+    @Autowired(required = false)
+    private SessionClient sessionClientTemp;
+
+    @PostConstruct
+    public void init() {
+        sessionClient = sessionClientTemp;
     }
 
     /**
-     * 获取 Session 管理实例
-     * @return
+     * 获取当前用户的 Token 信息
      */
-    public static SessionManager getInstance() {
-        if (sessionManager == null) {
-            synchronized (SessionManager.class) {
-                if (sessionManager == null)
-                    sessionManager = new SessionManager();
-            }
-        }
-        return sessionManager;
-    }
-
-    /**
-     * 获取用户唯一编号
-     * @param request
-     * @return
-     */
-    public String getUUID(HttpServletRequest request) {
-        return uuid.get();
-    }
-
-    /**
-     * 获取用户 token 信息
-     * @param request
-     * @return
-     */
-    public String getToken(HttpServletRequest request) {
+    public static String getToken() {
         return token.get();
     }
 
     /**
-     * 验证当前请求用户是否是登录状态
-     * @param request
-     * @return
+     * 获取当前用户的 AccessToken 信息
      */
-    public boolean isSessionValidate(HttpServletRequest request) {
-        if (getToken(request) == null)
+    public static String getAccessToken() {
+        return accessToken.get();
+    }
+
+    /**
+     * 判断 AccessToken 是否有效
+     */
+    public static boolean isAccessEanbled() {
+        String _token = accessToken.get();
+        if (StringUtils.isBlank(_token))
             return false;
-        return false;
+        HttpResult result = sessionClient.isAccessEnabled(_token);
+        return "1".equals(result.getData());
+    }
+
+    /**
+     * 验证当前请求用户是否是登录状态
+     */
+    public static boolean isSessionValidate() {
+        String _token = token.get();
+        if (StringUtils.isBlank(_token))
+            return false;
+        HttpResult result = sessionClient.isSessionValidate(_token);
+        return "1".equals(result.getData());
     }
 
 }
