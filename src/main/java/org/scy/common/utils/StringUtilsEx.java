@@ -36,6 +36,10 @@ public abstract class StringUtilsEx {
      * 获取随机字符串
      */
     public static String getRandomString(int length) {
+        return getRandomString(length, chars);
+    }
+
+    public static String getRandomString(int length, char[] chars) {
         length = length > 0 ? length : 32;
         Random random = new Random();
         StringBuilder str = new StringBuilder();
