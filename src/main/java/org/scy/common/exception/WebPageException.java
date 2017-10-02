@@ -5,5 +5,5 @@ package org.scy.common.exception;
  * Created by shicy on 2017/9/29.
  */
 @SuppressWarnings("unused")
-public class WebPageException extends Exception {
+public class WebPageException extends RuntimeException {
 }

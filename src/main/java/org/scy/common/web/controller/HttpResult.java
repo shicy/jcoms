@@ -136,7 +136,7 @@ public class HttpResult {
      * 获取配置资源文件消息
      * @param code 消息编码
      */
-    private static String  getResourceMessage(int code) {
+    public static String  getResourceMessage(int code) {
         return getResourceMessage(code, "");
     }
 

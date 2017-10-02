@@ -3,6 +3,7 @@ package org.scy.common.web.controller;
 import feign.RetryableException;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
+import org.scy.common.exception.ResultException;
 import org.scy.common.exception.WebPageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,16 @@ public class ExceptionController {
     public HttpResult handlerException(Exception e) {
         logger.error(e.getMessage());
         return HttpResult.error(e);
+    }
+
+    /**
+     * 自定义 Result 异常
+     */
+    @ResponseBody
+    @ExceptionHandler(ResultException.class)
+    public HttpResult handlerResultException(ResultException e) {
+        logger.error(e.getMessage());
+        return HttpResult.error(e.getCode(), e.getMessage());
     }
 
     /**
