@@ -25,6 +25,7 @@ public final class Const {
     // 参数格式错误
     public final static short MSG_CODE_PARAMFORMATERROR = 1002;
 
+    // 存在重复
     public final static short MSG_CODE_DUPLICATED = 1003;
 
     // 服务拒绝访问或连接失败
@@ -35,5 +36,8 @@ public final class Const {
 
     // 没有操作权限
     public final static short MSG_CODE_NOPERMISSION = 1101;
+
+    // 验证码错误
+    public final static short MSG_CODE_VALIDFAILED = 1102;
 
 }
