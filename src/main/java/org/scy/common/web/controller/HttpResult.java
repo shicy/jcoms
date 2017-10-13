@@ -3,6 +3,7 @@ package org.scy.common.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.StringUtils;
+import org.scy.common.ds.PageInfo;
 import org.scy.common.utils.MapUtilsEx;
 
 import java.util.Locale;
@@ -42,12 +43,20 @@ public class HttpResult {
     // 结果数据集
     private Object data;
 
+    // 分页信息
+    private PageInfo pageInfo;
+
     public HttpResult() {
         //
     }
 
     public HttpResult(Object data) {
         this.setData(data);
+    }
+
+    public HttpResult(Object data, PageInfo pageInfo) {
+        this.setData(data);
+        this.setPageInfo(pageInfo);
     }
 
     public HttpResult(int code, String msg) {
@@ -67,6 +76,10 @@ public class HttpResult {
 
     public static HttpResult ok(Object data) {
         return new HttpResult(data);
+    }
+
+    public static HttpResult ok(Object data, PageInfo pageInfo) {
+        return new HttpResult(data, pageInfo);
     }
 
     public static HttpResult error() {
@@ -119,6 +132,14 @@ public class HttpResult {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public PageInfo getPageInfo() {
+        return pageInfo;
+    }
+
+    public void setPageInfo(PageInfo pageInfo) {
+        this.pageInfo = pageInfo;
     }
 
     /**
