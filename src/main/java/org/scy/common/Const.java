@@ -28,6 +28,12 @@ public final class Const {
     // 存在重复
     public final static short MSG_CODE_DUPLICATED = 1003;
 
+    // 对象不存在
+    public final static short MSG_CODE_NOTEXIST = 1004;
+
+    // 数据为空
+    public final static short MSG_CODE_DATAEMPTY = 1005;
+
     // 服务拒绝访问或连接失败
     public final static short MSG_CODE_SERVERREFUSED = 1010;
 
