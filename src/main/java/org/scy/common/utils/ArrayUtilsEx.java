@@ -12,21 +12,19 @@ import java.util.*;
  * 数组工具类，是{@link org.apache.commons.lang3.ArrayUtils}的扩展
  * Created by shicy on 2017/5/9.
  */
+@SuppressWarnings("unused")
 public abstract class ArrayUtilsEx {
 
     /**
      * 查找列表中的某一元素，通过ID进行比较
-     * @param list
-     * @param id
-     * @return
      */
     public static BaseModel findObject(List<? extends BaseModel> list, int id) {
         if (list == null || list.size() == 0)
             return null;
 
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getId() == id) {
-                return list.get(i);
+        for (BaseModel model: list) {
+            if (model.getId() == id) {
+                return model;
             }
         }
 
@@ -35,17 +33,12 @@ public abstract class ArrayUtilsEx {
 
     /**
      * 查找列表中的一个对象 add by shicy 2012-3-11
-     * @param list
-     * @param name
-     * @param value
-     * @return
      */
     public static <T> T findObject(List<T> list, String name, Object value) {
         if (list == null || list.size() == 0)
             return null;
 
-        for (int i = 0; i < list.size(); i++) {
-            T obj = list.get(i);
+        for (T obj: list) {
             if (obj == null)
                 continue;
             try {
@@ -55,7 +48,9 @@ public abstract class ArrayUtilsEx {
                 if (value != null && value.equals(val))
                     return obj;
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
 
         return null;
@@ -63,8 +58,6 @@ public abstract class ArrayUtilsEx {
 
     /**
      * 获取对象编号集
-     * @param list
-     * @return
      */
     public static int[] getObjectIds(List<? extends BaseModel> list) {
         if (list == null || list.size() == 0)
@@ -78,23 +71,42 @@ public abstract class ArrayUtilsEx {
         return ids;
     }
 
+    public static String join(Object[] array, String sep) {
+        StringBuilder result = new StringBuilder();
+        if (array != null) {
+            if (sep == null)
+                sep = "";
+            for (Object obj: array) {
+                String value = obj != null ? obj.toString() : null;
+                if (value != null && value.length() > 0) {
+                    if (result.length() > 0)
+                        result.append(sep);
+                    result.append(value);
+                }
+            }
+        }
+        return result.toString();
+    }
+
+    public static String join(Collection collection, String sep) {
+        if (collection != null)
+            return join(collection.toArray(), sep);
+        return "";
+    }
+
     /**
      * 输出列表
-     * @param list
      */
     public static void print(List list) {
         if (list != null && list.size() > 0) {
-            for (int i = 0; i < list.size(); i++) {
-                System.out.println(list.get(i).toString());
+            for (Object obj: list) {
+                System.out.println(obj.toString());
             }
         }
     }
 
     /**
      * 查找并返回arr1不在arr2中的元素，即返回arr1中有而arr2中没有的元素
-     * @param arr1
-     * @param arr2
-     * @return
      */
     public static int[] removeElements(int[] arr1, int[] arr2) {
         if (arr1 == null || arr1.length == 0)
@@ -102,27 +114,25 @@ public abstract class ArrayUtilsEx {
         if (arr2 == null || arr2.length == 0)
             return ArrayUtils.subarray(arr1, 0, arr1.length-1);
 
-        String strVals = "";
-        for (int i = 0; i < arr1.length; i++) {
-            if (ArrayUtils.indexOf(arr2, arr1[i]) < 0)
-                strVals += "," + arr1[i];
+        StringBuilder strVals = new StringBuilder();
+        for (int val1: arr1) {
+            if (ArrayUtils.indexOf(arr2, val1) < 0)
+                strVals.append(",").append(val1);
         }
-        return transStrToInt(StringUtils.split(strVals, ","));
+        return transStrToInt(StringUtils.split(strVals.toString(), ","));
     }
 
     /**
      * 移除空项
-     * @param array
-     * @return
      */
     public static <T> T[] removeNull(T[] array) {
         if (array == null || array.length == 0)
             return array;
 
         List<T> list = new ArrayList<T>();
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] != null)
-                list.add(array[i]);
+        for (T obj: array) {
+            if (obj != null)
+                list.add(obj);
         }
 
         return list.toArray(array);
@@ -138,6 +148,12 @@ public abstract class ArrayUtilsEx {
         List<String> list = toList(array);
         Collections.sort(list, new Comparator<String>() {
             public int compare(String o1, String o2) {
+                if (o1 == null && o2 == null)
+                    return 0;
+                if (o1 == null)
+                    return desc ? -1 : 1;
+                if (o2 == null)
+                    return desc ? 1 : -1;
                 o1 = StringUtilsEx.toHanYuPinYin(o1, true);
                 o2 = StringUtilsEx.toHanYuPinYin(o2, true);
                 int v = o1.compareTo(o2);
@@ -155,6 +171,12 @@ public abstract class ArrayUtilsEx {
     public static void sortBeansById(List<? extends BaseModel> list, final int[] ids) {
         Collections.sort(list, new Comparator<BaseModel>() {
             public int compare(BaseModel o1, BaseModel o2) {
+                if (o1 == null && o2 == null)
+                    return 0;
+                if (o1 == null)
+                    return -1;
+                if (o2 == null)
+                    return 1;
                 int p1 = ArrayUtils.indexOf(ids, o1.getId());
                 int p2 = ArrayUtils.indexOf(ids, o2.getId());
                 return p1 - p2;
@@ -166,8 +188,6 @@ public abstract class ArrayUtilsEx {
      * 将对象数组封装成一个迭代器
      * @param <T> 使用泛型
      * @param objs 一个对象数组
-     * @param t 泛型原型对象，如输入是一个字符串数组，该原型为new String()
-     * @return
      */
     public static <T> Iterator<T> toIterator(T[] objs) {
         return new ArrayIterator<T>(objs);
@@ -175,15 +195,12 @@ public abstract class ArrayUtilsEx {
 
     /**
      * 将数据转化成列表集合
-     * @param <T>
-     * @param objs
-     * @return
      */
     public static <T> List<T> toList(T[] objs) {
         List<T> list = new ArrayList<T>();
         if (objs != null) {
-            for (int i = 0; i < objs.length; i++) {
-                list.add(objs[i]);
+            for (T obj: objs) {
+                list.add(obj);
             }
         }
         return list;
@@ -192,7 +209,6 @@ public abstract class ArrayUtilsEx {
     /**
      * 对象转换成整数型数组 add by shicy 2011-4-13
      * @param arrayObj 数据或集合
-     * @return
      */
     public static int[] toPrimitiveInt(Object arrayObj) {
         Integer[] ret = toObjectInt(arrayObj);
@@ -202,7 +218,6 @@ public abstract class ArrayUtilsEx {
     /**
      * 数组对象转换成整型数组 add by shicy 2011-4-13
      * @param arrayObj 数组对象，也可以是集合对象
-     * @return
      */
     public static Integer[] toObjectInt(Object arrayObj) {
         if (arrayObj == null)
@@ -224,175 +239,171 @@ public abstract class ArrayUtilsEx {
 
     /**
      * 试图获取对象的整数值
-     * @param obj
-     * @param defaultValue
-     * @return
      */
     private static int getIntValue(Object obj, int defaultValue) {
         try {
             return Integer.parseInt("" + obj);
         }
-        catch (Exception e) {};
+        catch (Exception e) {
+            //
+        };
         return defaultValue;
     }
 
     /**
      * 试图将一个对象数组转换成short[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static short[] toPrimitiveShort(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_SHORT_ARRAY;
         short[] ret = new short[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Short.parseShort("" + objs[i]);
+                ret[len++] = Short.parseShort("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret : ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
      * 试图将一个对象数组转换成Short[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static Short[] toObjectShort(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_SHORT_OBJECT_ARRAY;
         Short[] ret = new Short[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Short.valueOf("" + objs[i]);
+                ret[len++] = Short.valueOf("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret : (Short[])ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
      * 试图将一个对象数组转换成float[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static float[] toPrimitiveFloat(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_FLOAT_ARRAY;
         float[] ret = new float[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Float.parseFloat("" + objs[i]);
+                ret[len++] = Float.parseFloat("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret : ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
      * 试图将一个对象数组转换成Float[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static Float[] toObjectFloat(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_FLOAT_OBJECT_ARRAY;
         Float[] ret = new Float[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Float.valueOf("" + objs[i]);
+                ret[len++] = Float.valueOf("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret :(Float[])ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
      * 试图将一个对象数组转换成double[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static double[] toPrimitiveDouble(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_DOUBLE_ARRAY;
         double[] ret = new double[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Double.parseDouble("" + objs[i]);
+                ret[len++] = Double.parseDouble("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret : ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
      * 试图将一个对象数组转换成Double[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static Double[] toObjectDouble(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_DOUBLE_OBJECT_ARRAY;
         Double[] ret = new Double[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Double.valueOf("" + objs[i]);
+                ret[len++] = Double.valueOf("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret : (Double[])ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
      * 试图将一个对象数组转换成long[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static long[] toPrimitiveLong(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_LONG_ARRAY;
         long[] ret = new long[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Long.parseLong("" + objs[i]);
+                ret[len++] = Long.parseLong("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret : ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
      * 试图将一个对象数组转换成Long[]，忽略转换失败的对象
-     * @param objs
-     * @return
      */
     public static Long[] toObjectLong(Object[] objs) {
         if (objs == null || objs.length == 0)
             return ArrayUtils.EMPTY_LONG_OBJECT_ARRAY;
         Long[] ret = new Long[objs.length];
         int len = 0;
-        for (int i = 0; i < objs.length; i++) {
+        for (Object obj: objs) {
             try {
-                ret[len++] = Long.valueOf("" + objs[i]);
+                ret[len++] = Long.valueOf("" + obj);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                //
+            }
         }
         return len == ret.length ? ret : (Long[])ArrayUtils.subarray(ret, 0, len);
     }
 
     /**
-     *
-     * @param objs
-     * @param cls
-     * @return
+     * 数字类型转换
      */
     public static Object transtion(Object[] objs, Class<?> cls) {
         if (objs == null || cls == null)
@@ -421,8 +432,6 @@ public abstract class ArrayUtilsEx {
 
     /**
      * 将一个字符串数组转换成整型数组
-     * @param args
-     * @return
      */
     public static int[] transStrToInt(String[] args) {
         if (args == null || args.length == 0)
@@ -435,8 +444,6 @@ public abstract class ArrayUtilsEx {
 
     /**
      * 将一个字符串数组转换成长整型数组
-     * @param args
-     * @return
      */
     public static long[] transStrToLong(String[] args) {
         if (args == null || args.length == 0)
@@ -449,8 +456,6 @@ public abstract class ArrayUtilsEx {
 
     /**
      * 将一个字符串数组转换成双精度数组
-     * @param args
-     * @return
      */
     public static double[] transStrToDouble(String[] args) {
         if (args == null || args.length == 0)
@@ -470,7 +475,7 @@ public abstract class ArrayUtilsEx {
         private int index;
         private int length;
 
-        public ArrayIterator(T[] objs) {
+        private ArrayIterator(T[] objs) {
             this.objs = objs;
             this.index = 0;
             this.length = objs.length;
@@ -485,7 +490,7 @@ public abstract class ArrayUtilsEx {
         }
 
         public void remove() {
-            if (true) throw new RuntimeException("方法未实现! ");
+            throw new RuntimeException("方法未实现! ");
         }
 
     }
