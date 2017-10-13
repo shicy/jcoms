@@ -19,4 +19,10 @@ public interface SessionClient {
     @RequestMapping(value = "valid/session/{token}", method = RequestMethod.GET)
     HttpResult isSessionValidate(@PathVariable("token") String token);
 
+    @RequestMapping(value = "session/account/{token}", method = RequestMethod.GET)
+    HttpResult getAccount(@PathVariable("token") String token);
+
+    @RequestMapping(value = "session/info/{token}", method = RequestMethod.GET)
+    HttpResult getUser(@PathVariable("token") String token);
+
 }

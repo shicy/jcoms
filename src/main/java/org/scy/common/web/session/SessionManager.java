@@ -24,6 +24,9 @@ public final class SessionManager {
     // 接口访问权限口令
     public final static ThreadLocal<String> accessToken = new ThreadLocal<String>();
 
+    private final static ThreadLocal<Account> accountInfo = new ThreadLocal<Account>();
+    private final static ThreadLocal<User> userInfo = new ThreadLocal<User>();
+
     // Token 属性名称
     public final static String TOKEN_KEY = "token";
 
@@ -74,6 +77,58 @@ public final class SessionManager {
             return false;
         HttpResult result = sessionClient.isSessionValidate(_token);
         return "1".equals(result.getData());
+    }
+
+    /**
+     * 获取帐户信息
+     */
+    public static Account getAccount() {
+        Account account = accountInfo.get();
+        if (account == null) {
+            String _token = accessToken.get();
+            if (StringUtils.isBlank(_token)) {
+                HttpResult result = sessionClient.getAccount(_token);
+                if (result.getCode() == HttpResult.OK) {
+                    account = result.getData(Account.class);
+                    accountInfo.set(account);
+                }
+            }
+        }
+        return account;
+    }
+
+    /**
+     * 获取帐户编号
+     */
+    public static int getAccountId() {
+        Account account = getAccount();
+        return account != null ? account.getId() : 0;
+    }
+
+    /**
+     * 获取当前用户信息
+     */
+    public static User getUser() {
+        User user = userInfo.get();
+        if (user == null) {
+            String _token = token.get();
+            if (StringUtils.isNotBlank(_token)) {
+                HttpResult result = sessionClient.getUser(_token);
+                if (result.getCode() == HttpResult.OK) {
+                    user = result.getData(User.class);
+                    userInfo.set(user);
+                }
+            }
+        }
+        return user;
+    }
+
+    /**
+     * 获取用户编号
+     */
+    public static int getUserId() {
+        User user = getUser();
+        return user != null ? user.getId() : 0;
     }
 
 }
