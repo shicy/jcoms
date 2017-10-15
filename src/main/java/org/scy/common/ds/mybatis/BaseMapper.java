@@ -13,11 +13,8 @@ public interface BaseMapper<T> {
     T getById(int id);
 
     int add(T model);
-
-    int update(T model);
-
-    int delete(T model);
-    int deleteById(int id);
+    void update(T model);
+    void delete(T model);
 
     List<T> find(Selector selector);
     int countFind(Selector selector);
