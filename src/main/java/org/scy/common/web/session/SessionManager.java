@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Session 管理类
@@ -111,7 +113,23 @@ public final class SessionManager {
      * @return 返回用户token信息
      */
     public static String doLogin(String username, String password, int loginType, int expires) {
-        return null;
+        if (StringUtils.isNotBlank(token.get()))
+            doLogout();
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        if (StringUtils.isBlank(username))
+            throw new RuntimeException("登录用户名称不能为空");
+        params.put("username", StringUtils.trimToEmpty(username));
+        params.put("password", StringUtils.trimToEmpty(password));
+        params.put("loginType", loginType < 0 ? 0 : loginType);
+        params.put("expires", expires < 0 ? 0 : expires);
+
+        HttpResult result = sessionClient.login(params);
+        if (result.getCode() == HttpResult.OK) {
+            token.set("" + result.getData());
+        }
+
+        return token.get();
     }
 
     /**
