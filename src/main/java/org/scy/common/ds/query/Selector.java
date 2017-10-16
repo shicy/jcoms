@@ -98,16 +98,11 @@ public class Selector {
         return "";
     }
 
-    public int getPage() {
-        if (pageInfo != null)
-            return pageInfo.getPage();
-        return 1;
-    }
-
-    public int getLimit() {
-        if (pageInfo != null)
-            return pageInfo.getSize();
-        return 20;
+    public String getLimit() {
+        if (pageInfo != null) {
+            return "limit " + pageInfo.getPage() + "," + pageInfo.getSize();
+        }
+        return "";
     }
 
 }
