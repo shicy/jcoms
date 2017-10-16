@@ -198,4 +198,11 @@ public final class SessionManager {
         return user != null ? user.getId() : 0;
     }
 
+    /**
+     * 判断是不是平台帐户
+     */
+    public static boolean isPlatform() {
+        return Const.PLATFORM_CODE.equals(getAccessToken());
+    }
+
 }
