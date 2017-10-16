@@ -1,6 +1,7 @@
 package org.scy.common.web.session;
 
 import org.apache.commons.lang3.StringUtils;
+import org.scy.common.Const;
 import org.scy.common.web.controller.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -77,6 +78,54 @@ public final class SessionManager {
             return false;
         HttpResult result = sessionClient.isSessionValidate(_token);
         return "1".equals(result.getData());
+    }
+
+    /**
+     * 用户登录，session无期限
+     * @param username 登录名称
+     * @param password 登录密码
+     * @return 返回用户token信息
+     */
+    public static String doLogin(String username, String password) {
+        return doLogin(username, password, 0);
+    }
+
+    /**
+     * 用户登录，可以使用任何一种登录方式
+     * @param username 登录名称
+     * @param password 登录密码
+     * @param expires 自动过期时间（秒）
+     * @return 返回用户token信息
+     */
+    public static String doLogin(String username, String password, int expires) {
+        int loginType = Const.LOGIN_TYPE_NAME | Const.LOGIN_TYPE_MOBILE | Const.LOGIN_TYPE_EMAIL;
+        return doLogin(username, password, loginType, expires);
+    }
+
+    /**
+     * 用户登录
+     * @param username 登录名称，用户名、手机号码或邮箱
+     * @param password 登录密码
+     * @param loginType 登录方式
+     * @param expires 自动过期时间（秒），0为无限期
+     * @return 返回用户token信息
+     */
+    public static String doLogin(String username, String password, int loginType, int expires) {
+        return null;
+    }
+
+    /**
+     * 用户退出登录
+     */
+    public static void doLogout() {
+        String _token = token.get();
+        if (StringUtils.isNotBlank(_token)) {
+            HttpResult result = sessionClient.logout(_token);
+            if (result.getCode() == HttpResult.OK) {
+                token.remove();
+                userInfo.remove();
+            }
+        }
     }
 
     /**

@@ -7,14 +7,23 @@ package org.scy.common;
 @SuppressWarnings("unused")
 public final class Const {
 
+    // 平台帐号
+    public final static String PLATFORM_CODE = "1000000000000000";
+
     // 有效
     public final static short ENABLED = 1;
 
     // 无效
     public final static short DISABLED = 0;
 
-    // 平台帐号
-    public final static String PLATFORM_CODE = "1000000000000000";
+    // 用户名称登录
+    public final static short LOGIN_TYPE_NAME = 1;
+
+    // 手机号码登录
+    public final static short LOGIN_TYPE_MOBILE = 2;
+
+    // 邮箱登录
+    public final static short LOGIN_TYPE_EMAIL = 3;
 
     // 参数错误
     public final static short MSG_CODE_PARAMINVALID  = 1000;
