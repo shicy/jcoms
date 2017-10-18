@@ -3,6 +3,8 @@ package org.scy.common.web.session;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
 import org.scy.common.web.controller.HttpResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +37,8 @@ public final class SessionManager {
 
     // AccessToken 属性名称
     public final static String ACCESS_TOKEN_KEY = "X-Access-Token";
+
+    private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
     private static SessionClient sessionClient;
 
@@ -128,6 +132,9 @@ public final class SessionManager {
         if (result.getCode() == HttpResult.OK) {
             token.set("" + result.getData());
         }
+        else {
+            logger.error(result.getCode() + "-" + result.getMsg());
+        }
 
         return token.get();
     }
@@ -142,6 +149,9 @@ public final class SessionManager {
             if (result.getCode() == HttpResult.OK) {
                 token.remove();
                 userInfo.remove();
+            }
+            else {
+                logger.error(result.getCode() + "-" + result.getMsg());
             }
         }
     }
@@ -158,6 +168,9 @@ public final class SessionManager {
                 if (result.getCode() == HttpResult.OK) {
                     account = result.getData(Account.class);
                     accountInfo.set(account);
+                }
+                else {
+                    logger.error(result.getCode() + "-" + result.getMsg());
                 }
             }
         }
@@ -184,6 +197,9 @@ public final class SessionManager {
                 if (result.getCode() == HttpResult.OK) {
                     user = result.getData(User.class);
                     userInfo.set(user);
+                }
+                else {
+                    logger.error(result.getCode() + "-" + result.getMsg());
                 }
             }
         }
