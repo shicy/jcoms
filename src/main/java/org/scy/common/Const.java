@@ -16,6 +16,12 @@ public final class Const {
     // 无效
     public final static short DISABLED = 0;
 
+    // 只读
+    public final static short READONLY = 0;
+
+    // 可写
+    public final static short WRITEABLE = 1;
+
     // 用户名称登录
     public final static short LOGIN_TYPE_NAME = 1;
 
