@@ -9,6 +9,7 @@ import java.util.Collection;
  * 查询过滤条件
  * Created by shicy on 2017/10/11.
  */
+@SuppressWarnings({"unused", "unchecked"})
 public class Filter {
 
     private String field;
@@ -67,7 +68,13 @@ public class Filter {
             }
             result.append(" ").append(oper.toString()).append(" ");
 
-            if (value != null) {
+            if (oper.equals(Oper.LIKE)) {
+                if (value != null)
+                    result.append("'%").append(value).append("%'");
+                else
+                    result.append("''");
+            }
+            else if (value != null) {
                 if (value instanceof Array) {
                     result.append("(").append(getCollectionValue((Object[])value)).append(")");
                 }
