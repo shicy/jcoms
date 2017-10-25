@@ -90,11 +90,39 @@ public class Selector {
         return "";
     }
 
+    public String getWhereMore() {
+        List<String> wheres = new ArrayList<String>();
+
+        for (Filter filter: filters) {
+            wheres.add(filter.toString());
+        }
+
+        if (wheres.size() > 0)
+            return ArrayUtilsEx.join(wheres, " and ");
+        return "";
+    }
+
     public String getOrderBy() {
         return "";
     }
 
     public String getGroupBy() {
+        return "";
+    }
+
+    public String getOrder() {
+        return "";
+    }
+
+    public String getOrderMore() {
+        return "";
+    }
+
+    public String getGroup() {
+        return "";
+    }
+
+    public String getGroupMore() {
         return "";
     }
 
