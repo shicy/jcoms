@@ -27,55 +27,64 @@ public class Selector {
         this.pageInfo = pageInfo;
     }
 
-    public void addFilter(Filter filter) {
+    public Selector addFilter(Filter filter) {
         if (filter != null)
             this.filters.add(filter);
+        return this;
     }
 
-    public void addFilter(String field, Object value) {
+    public Selector addFilter(String field, Object value) {
         if (StringUtils.isNotBlank(field))
             this.filters.add(new Filter(field, value));
+        return this;
     }
 
-    public void addFilter(String field, Object value, Oper oper) {
+    public Selector addFilter(String field, Object value, Oper oper) {
         if (StringUtils.isNotBlank(field))
             this.filters.add(new Filter(field, value, oper));
+        return this;
     }
 
-    public void addFilterNotNull(String field, Object value) {
+    public Selector addFilterNotNull(String field, Object value) {
         if (value != null) {
             this.addFilter(field, value);
         }
+        return this;
     }
 
-    public void addFilterNotNull(String field, Object value, Oper oper) {
+    public Selector addFilterNotNull(String field, Object value, Oper oper) {
         if (value != null) {
             this.addFilter(field, value, oper);
         }
+        return this;
     }
 
-    public void addFilterNotEmpty(String field, Object value) {
+    public Selector addFilterNotEmpty(String field, Object value) {
         if (value != null && StringUtils.isNotEmpty(value.toString())) {
             this.addFilter(field, value);
         }
+        return this;
     }
 
-    public void addFilterNotEmpty(String field, Object value, Oper oper) {
+    public Selector addFilterNotEmpty(String field, Object value, Oper oper) {
         if (value != null && StringUtils.isNotEmpty(value.toString())) {
             this.addFilter(field, value, oper);
         }
+        return this;
     }
 
-    public void addFilterNotBlank(String field, Object value) {
+    public Selector addFilterNotBlank(String field, Object value) {
         if (value != null && StringUtils.isNotBlank(value.toString())) {
             this.addFilter(field, value);
         }
+        return this;
     }
 
-    public void addFilterNotBlank(String field, Object value, Oper oper) {
+    public Selector addFilterNotBlank(String field, Object value, Oper oper) {
         if (value != null && StringUtils.isNotBlank(value.toString())) {
             this.addFilter(field, value, oper);
         }
+        return this;
     }
 
     public String getWhere() {
