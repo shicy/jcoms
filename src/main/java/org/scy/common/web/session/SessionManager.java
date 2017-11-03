@@ -167,14 +167,15 @@ public final class SessionManager {
                 HttpResult result = sessionClient.getAccount(_token);
                 if (result.getCode() == HttpResult.OK) {
                     account = result.getData(Account.class);
-                    accountInfo.set(account);
                 }
                 else {
+                    account = new Account();
                     logger.error(result.getCode() + "-" + result.getMsg());
                 }
+                accountInfo.set(account);
             }
         }
-        return account;
+        return account != null && account.getId() > 0 ? account : null;
     }
 
     /**
@@ -196,14 +197,15 @@ public final class SessionManager {
                 HttpResult result = sessionClient.getUser(_token);
                 if (result.getCode() == HttpResult.OK) {
                     user = result.getData(User.class);
-                    userInfo.set(user);
                 }
                 else {
+                    user = new User();
                     logger.error(result.getCode() + "-" + result.getMsg());
                 }
+                userInfo.set(user);
             }
         }
-        return user;
+        return user != null && user.getId() > 0 ? user : null;
     }
 
     /**
