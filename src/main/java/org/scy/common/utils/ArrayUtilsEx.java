@@ -3,6 +3,7 @@ package org.scy.common.utils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.scy.common.ds.mybatis.BaseMapper;
 import org.scy.common.web.model.BaseModel;
 
 import java.lang.reflect.Array;
@@ -18,11 +19,11 @@ public abstract class ArrayUtilsEx {
     /**
      * 查找列表中的某一元素，通过ID进行比较
      */
-    public static BaseModel findObject(List<? extends BaseModel> list, int id) {
+    public static <T extends BaseModel> T findObject(List<T> list, int id) {
         if (list == null || list.size() == 0)
             return null;
 
-        for (BaseModel model: list) {
+        for (T model: list) {
             if (model.getId() == id) {
                 return model;
             }
