@@ -13,6 +13,7 @@ import java.net.URLEncoder;
  * Http 相关工具类
  * Created by hykj on 2017/8/16.
  */
+@SuppressWarnings("unused")
 public abstract class HttpUtilsEx {
 
     /**
@@ -225,6 +226,26 @@ public abstract class HttpUtilsEx {
      */
     public static String[] getStringValues(HttpServletRequest req, String key) {
         return req.getParameterValues(key);
+    }
+
+    /**
+     * 获取IP地址
+     */
+    public static String getIP(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (StringUtils.isNotBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            int index = ip.indexOf(',');
+            if (index >= 0) {
+                return ip.substring(0, index);
+            }
+            return ip;
+        }
+
+        ip = request.getHeader("X-Real-IP");
+        if (StringUtils.isNotBlank(ip) && !"unknown".equalsIgnoreCase(ip))
+            return ip;
+
+        return request.getRemoteAddr();
     }
 
 }
