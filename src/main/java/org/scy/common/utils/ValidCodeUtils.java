@@ -24,7 +24,6 @@ public abstract class ValidCodeUtils {
 
     /**
      * 获取一个4位的验证码
-     * @return
      */
     public static String getCode() {
         return getCode(4);
@@ -32,8 +31,6 @@ public abstract class ValidCodeUtils {
 
     /**
      * 获取一个随机验证码号，最多10位码
-     * @param length
-     * @return
      */
     public static String getCode(int length) {
         if (length < 1)
@@ -53,7 +50,6 @@ public abstract class ValidCodeUtils {
     /**
      * 获取验证码图片的 Base64 编码，默认宽度100，高度40
      * @param code 验证码号
-     * @return
      */
     public static String getBase64CodeImage(String code) {
         return getBase64CodeImage(code, 100, 40);
@@ -64,7 +60,6 @@ public abstract class ValidCodeUtils {
      * @param code 验证码号
      * @param width 图片的宽度
      * @param height 图片的高度
-     * @return
      */
     public static String getBase64CodeImage(String code, int width, int height) {
         BufferedImage image = getCodeImage(code, width, height);
@@ -91,7 +86,6 @@ public abstract class ValidCodeUtils {
     /**
      * 生成验证码图片，默认宽度100，高度40
      * @param code 验证码号
-     * @return
      */
     public static BufferedImage getCodeImage(String code) {
         return getCodeImage(code, 100, 40);
@@ -102,7 +96,6 @@ public abstract class ValidCodeUtils {
      * @param code 验证码号
      * @param width 图片宽度
      * @param height 图片高度
-     * @return
      */
     public static BufferedImage getCodeImage(String code, int width, int height) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -131,7 +124,7 @@ public abstract class ValidCodeUtils {
     private static void drawCodes(Graphics2D graphics, int width, int height, String code,
             List<Color> exceptColors, Random random) {
         int fontSize = (int)Math.round(height * 0.7);
-        graphics.setFont(new Font("Times New Roman", Font.ROMAN_BASELINE, fontSize));
+        graphics.setFont(new Font("Times New Roman", Font.PLAIN, fontSize));
 
         int fontWidth = (int)Math.round(width * 0.8 / code.length());
         int offsetX = (int)Math.ceil((width - fontWidth * code.length()) / 2);
@@ -147,11 +140,6 @@ public abstract class ValidCodeUtils {
 
     /**
      * 绘制干扰线
-     * @param graphics
-     * @param width
-     * @param height
-     * @param exceptColors
-     * @param random
      */
     private static void drawLines(Graphics2D graphics, int width, int height, List<Color> exceptColors, Random random) {
         int lineCount = random.nextInt(5) + 4;
@@ -172,11 +160,6 @@ public abstract class ValidCodeUtils {
 
     /**
      * 绘制噪点
-     * @param image
-     * @param width
-     * @param height
-     * @param exceptColors
-     * @param random
      */
     private static void drawNoise(BufferedImage image, int width, int height, List<Color> exceptColors, Random random) {
         int noiseCount = (int)(width * height * 0.05);
@@ -189,8 +172,6 @@ public abstract class ValidCodeUtils {
 
     /**
      * 随机生成一个颜色
-     * @param random
-     * @return
      */
     private static Color getRandomColor(List<Color> exceptColors, Random random) {
         if (random == null)
@@ -201,10 +182,15 @@ public abstract class ValidCodeUtils {
             int blue = random.nextInt(255);
             Color color = new Color(red, green, blue);
             if (exceptColors != null) {
+                Color tempColor = null;
                 for (Color color1: exceptColors) {
-                    if (color.equals(color1))
-                        continue;
+                    if (color.equals(color1)) {
+                        tempColor = color1;
+                        break;
+                    }
                 }
+                if (tempColor != null)
+                    continue;
                 exceptColors.add(color);
             }
             return color;
