@@ -88,14 +88,9 @@ public class Selector {
     }
 
     public String getWhere() {
-        List<String> wheres = new ArrayList<String>();
-
-        for (Filter filter: filters) {
-            wheres.add(filter.toString());
-        }
-
-        if (wheres.size() > 0)
-            return ArrayUtilsEx.join(wheres, " and ");
+        String where = getWhereMore();
+        if (StringUtils.isNotBlank(where))
+            return "where " + where;
         return "";
     }
 

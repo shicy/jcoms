@@ -81,6 +81,9 @@ public class Filter {
                 else if (value instanceof Collection) {
                     result.append("(").append(getCollectionValue(((Collection)value).toArray())).append(")");
                 }
+                else if (isNumberValue(value)) {
+                    result.append(value);
+                }
                 else {
                     String val = value.toString().replaceAll("'", "''");
                     result.append("'").append(val).append("'");
@@ -100,7 +103,7 @@ public class Filter {
                 continue;
             if (str.length() > 0)
                 str.append(",");
-            if (obj instanceof Number)
+            if (isNumberValue(obj))
                 str.append(obj);
             else {
                 String val = obj.toString().replaceAll("'", "''");
@@ -108,5 +111,9 @@ public class Filter {
             }
         }
         return str.toString();
+    }
+
+    private boolean isNumberValue(Object value) {
+        return value instanceof Number;
     }
 }
