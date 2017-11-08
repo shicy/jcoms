@@ -10,6 +10,7 @@ public class Account {
     private int id;
     private String name;
     private String code;
+    private int ownerId;
     private int state;
 
     public int getId() {
@@ -34,6 +35,14 @@ public class Account {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public int getState() {

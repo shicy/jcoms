@@ -187,6 +187,27 @@ public final class SessionManager {
     }
 
     /**
+     * 获取帐户所有者编号
+     */
+    public static int getAccountOwnerId() {
+        Account account = getAccount();
+        return account != null ? account.getOwnerId() : 0;
+    }
+
+    /**
+     * 是不是帐户所有者
+     */
+    public static boolean isAccountOwner(int accountId) {
+        Account account = getAccount();
+        if (account == null)
+            return false;
+        if (accountId > 0 && account.getId() != accountId)
+            return false;
+        int accountOwnerId = account.getOwnerId();
+        return accountOwnerId > 0 && accountOwnerId == getUserId();
+    }
+
+    /**
      * 获取当前用户信息
      */
     public static User getUser() {
