@@ -163,7 +163,7 @@ public final class SessionManager {
         Account account = accountInfo.get();
         if (account == null) {
             String _token = accessToken.get();
-            if (StringUtils.isBlank(_token)) {
+            if (StringUtils.isNotBlank(_token)) {
                 HttpResult result = sessionClient.getAccount(_token);
                 if (result.getCode() == HttpResult.OK) {
                     account = result.getData(Account.class);
@@ -220,7 +220,8 @@ public final class SessionManager {
      * 判断是不是平台帐户
      */
     public static boolean isPlatform() {
-        return Const.PLATFORM_CODE.equals(getAccessToken());
+        Account account = getAccount();
+        return account != null &&  Const.PLATFORM_CODE.equals(account.getCode());
     }
 
 }
