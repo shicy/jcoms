@@ -132,7 +132,7 @@ public class Selector {
 
     public String getLimit() {
         if (pageInfo != null) {
-            return "limit " + pageInfo.getPage() + "," + pageInfo.getSize();
+            return "limit " + pageInfo.getPageStart() + "," + pageInfo.getSize();
         }
         return "";
     }

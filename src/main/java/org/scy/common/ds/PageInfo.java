@@ -1,5 +1,6 @@
 package org.scy.common.ds;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.scy.common.utils.HttpUtilsEx;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,15 +78,21 @@ public class PageInfo implements Serializable {
         this.total = total;
     }
 
-//    public int getPages() {
-//        int pageTotal = this.getTotal();
-//        if (pageTotal > 0) {
-//            int pageCount = pageTotal / this.getSize();
-//            if (pageCount * this.getSize() < pageTotal)
-//                pageCount += 1;
-//            return pageCount;
-//        }
-//        return 0;
-//    }
+    @JSONField(serialize = false)
+    public int getPages() {
+        int pageTotal = this.getTotal();
+        if (pageTotal > 0) {
+            int pageCount = pageTotal / this.getSize();
+            if (pageCount * this.getSize() < pageTotal)
+                pageCount += 1;
+            return pageCount;
+        }
+        return 0;
+    }
+
+    @JSONField(serialize = false)
+    public int getPageStart() {
+        return (this.getPage() - 1) * this.getSize();
+    }
 
 }
