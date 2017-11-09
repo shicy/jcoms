@@ -2,16 +2,19 @@ package org.scy.common.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * note: 定义一些公共方法，提供静态调用。
  * Created by hykj on 2017/8/15.
  */
+@SuppressWarnings("unused")
 public abstract class CommonUtilsEx {
 
     /**
      * 检查一个IP地址的格式是否正确
      * @param strIp 一个IP地址字符串
-     * @return
      */
     public static boolean checkIP(String strIp) {
         if (StringUtils.isEmpty(strIp)) // 如果是空串，返回false
@@ -32,6 +35,32 @@ public abstract class CommonUtilsEx {
             }
         }
         return true;
+    }
+
+    /**
+     * 检查手机号码格式是否正确
+     */
+    public static boolean checkMobile(String mobile) {
+        if (StringUtils.isNotBlank(mobile)) {
+            String regExp = "^1((3[0-9])|(4[57])|(5[0-35-9])|(7[0135678])|(8[0-9]))\\d{8}$";
+            Pattern pattern = Pattern.compile(regExp);
+            Matcher matcher = pattern.matcher(mobile);
+            return matcher.matches();
+        }
+        return false;
+    }
+
+    /**
+     * 检查邮箱地址格式是否正确
+     */
+    public static boolean checkEmail(String email) {
+        if (StringUtils.isNotBlank(email)) {
+            String regExp = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
+            Pattern pattern = Pattern.compile(regExp);
+            Matcher matcher = pattern.matcher(email);
+            return matcher.matches();
+        }
+        return false;
     }
 
     /**
