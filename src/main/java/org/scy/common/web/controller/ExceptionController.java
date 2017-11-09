@@ -42,8 +42,13 @@ public class ExceptionController {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public HttpResult handlerException(Exception e) {
-        logger.error(e.getMessage());
-        return HttpResult.error(e);
+        String message = e.getMessage();
+        if (e instanceof NullPointerException) {
+            e.printStackTrace();
+            message = e.toString();
+        }
+        logger.error(message);
+        return HttpResult.error(message);
     }
 
     /**
