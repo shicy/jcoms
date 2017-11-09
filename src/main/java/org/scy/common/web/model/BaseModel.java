@@ -22,13 +22,13 @@ public class BaseModel implements Serializable {
     private short state = Const.ENABLED;
 
     // 创建用户编号
-    private int creatorId;
+    private Integer creatorId;
 
     // 创建时间，时间戳：毫秒
     private Long createTime;
 
     // 最后更新用户编号
-    private int updatorId;
+    private Integer updatorId;
 
     // 最后更新时间，时间戳：毫秒
     private Long updateTime;
@@ -67,28 +67,28 @@ public class BaseModel implements Serializable {
     /**
      * 获取创建用户编号
      */
-    public int getCreatorId() {
+    public Integer getCreatorId() {
         return this.creatorId;
     }
 
     /**
      * 设置创建用户编号
      */
-    public void setCreatorId(int creatorId) {
+    public void setCreatorId(Integer creatorId) {
         this.creatorId = creatorId;
     }
 
     /**
      * 获取更新用户编号
      */
-    public int getUpdatorId() {
+    public Integer getUpdatorId() {
         return this.updatorId;
     }
 
     /**
      * 设置更新用户编号
      */
-    public void setUpdatorId(int updatorId) {
+    public void setUpdatorId(Integer updatorId) {
         this.updatorId = updatorId;
     }
 
