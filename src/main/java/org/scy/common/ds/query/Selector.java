@@ -90,7 +90,7 @@ public class Selector {
     public String getWhere() {
         String where = getWhereMore();
         if (StringUtils.isNotBlank(where))
-            return "where " + where;
+            return "where " + where.substring(4);
         return "";
     }
 
@@ -102,15 +102,7 @@ public class Selector {
         }
 
         if (wheres.size() > 0)
-            return ArrayUtilsEx.join(wheres, " and ");
-        return "";
-    }
-
-    public String getOrderBy() {
-        return "";
-    }
-
-    public String getGroupBy() {
+            return "and " + ArrayUtilsEx.join(wheres, " and ");
         return "";
     }
 
