@@ -3,7 +3,6 @@ package org.scy.common.utils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.scy.common.ds.mybatis.BaseMapper;
 import org.scy.common.web.model.BaseModel;
 
 import java.lang.reflect.Array;
