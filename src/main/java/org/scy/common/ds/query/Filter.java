@@ -75,11 +75,11 @@ public class Filter {
                     result.append("''");
             }
             else if (value != null) {
-                if (value instanceof Array) {
-                    result.append("(").append(getCollectionValue((Object[])value)).append(")");
+                if (value.getClass().isArray()) {
+                    result.append("(").append(getArrayValue(value)).append(")");
                 }
                 else if (value instanceof Collection) {
-                    result.append("(").append(getCollectionValue(((Collection)value).toArray())).append(")");
+                    result.append("(").append(getCollectionValue((Collection)value)).append(")");
                 }
                 else if (isNumberValue(value)) {
                     result.append(value);
@@ -94,20 +94,36 @@ public class Filter {
         return "";
     }
 
-    private String getCollectionValue(Object[] values) {
-        if (values == null || values.length == 0)
-            return "";
-        StringBuilder str = new StringBuilder();
-        for (Object obj: values) {
-            if (obj == null)
-                continue;
-            if (str.length() > 0)
-                str.append(",");
-            if (isNumberValue(obj))
-                str.append(obj);
-            else {
-                String val = obj.toString().replaceAll("'", "''");
-                str.append("'").append(val).append("'");
+    private String getArrayValue(Object values) {
+        StringBuilder str = new StringBuilder("");
+        for (int i = 0, l = Array.getLength(values); i < l; i++) {
+            Object obj = Array.get(values, i);
+            if (obj != null) {
+                if (str.length() > 0)
+                    str.append(",");
+                if (isNumberValue(obj))
+                    str.append(obj);
+                else {
+                    String val = obj.toString().replaceAll("'", "''");
+                    str.append("'").append(val).append("'");
+                }
+            }
+        }
+        return str.toString();
+    }
+
+    private String getCollectionValue(Collection values) {
+        StringBuilder str = new StringBuilder("");
+        for (Object obj: values.toArray()) {
+            if (obj != null) {
+                if (str.length() > 0)
+                    str.append(",");
+                if (isNumberValue(obj))
+                    str.append(obj);
+                else {
+                    String val = obj.toString().replaceAll("'", "''");
+                    str.append("'").append(val).append("'");
+                }
             }
         }
         return str.toString();
@@ -116,4 +132,5 @@ public class Filter {
     private boolean isNumberValue(Object value) {
         return value instanceof Number;
     }
+
 }
