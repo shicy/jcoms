@@ -78,6 +78,10 @@ public class HttpResult {
         return new HttpResult(data);
     }
 
+    public static HttpResult ok(String msg, Object data) {
+        return new HttpResult(HttpResult.OK, msg, data);
+    }
+
     public static HttpResult ok(Object data, PageInfo pageInfo) {
         return new HttpResult(data, pageInfo);
     }
