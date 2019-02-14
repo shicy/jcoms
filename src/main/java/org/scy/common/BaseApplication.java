@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
+import org.springframework.boot.context.event.ApplicationFailedEvent;
+import org.springframework.boot.context.event.ApplicationPreparedEvent;
+import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -94,7 +98,7 @@ public class BaseApplication {
      * 获取启动监听器
      * @return
      */
-    protected ApplicationListener getStartListener() {
+    protected ApplicationListener<ApplicationStartingEvent> getStartListener() {
         return new AppStartListener();
     }
 
@@ -102,7 +106,7 @@ public class BaseApplication {
      * 获取环境监听器
      * @return
      */
-    protected ApplicationListener getEnvironmentListener() {
+    protected ApplicationListener<ApplicationEnvironmentPreparedEvent> getEnvironmentListener() {
         return new AppEnvironmentListener();
     }
 
@@ -110,7 +114,7 @@ public class BaseApplication {
      * 获取上下文监听器
      * @return
      */
-    protected ApplicationListener getContextListener() {
+    protected ApplicationListener<ApplicationPreparedEvent> getContextListener() {
         return new AppContextListener();
     }
 
@@ -118,7 +122,7 @@ public class BaseApplication {
      * 获取异常监听器
      * @return
      */
-    protected ApplicationListener getFailedListener() {
+    protected ApplicationListener<ApplicationFailedEvent> getFailedListener() {
         return new AppFailedListener();
     }
 
