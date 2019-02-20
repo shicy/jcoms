@@ -71,6 +71,20 @@ public abstract class ArrayUtilsEx {
         return ids;
     }
 
+    public static String join(int[] array, String sep) {
+        StringBuilder result = new StringBuilder();
+        if (array != null) {
+            if (sep == null)
+                sep = "";
+            for (int i = 0; i < array.length; i++) {
+                if (i > 0)
+                    result.append(sep);
+                result.append(array[i]);
+            }
+        }
+        return result.toString();
+    }
+
     public static String join(Object[] array, String sep) {
         StringBuilder result = new StringBuilder();
         if (array != null) {
