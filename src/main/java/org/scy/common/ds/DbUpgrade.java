@@ -155,6 +155,7 @@ public class DbUpgrade /*extends Thread*/ {
      * 检验版本数据库表是否存在，如果不存在则创建表
      */
     private void checkIfVersionTableExists() {
+        logger.info("checkIfVersionTableExists:" + versionTableName);
         if (!isTableExists(versionTableName)) {
             StringBuilder sql = new StringBuilder();
             sql.append("CREATE TABLE `").append(versionTableName).append("` (");

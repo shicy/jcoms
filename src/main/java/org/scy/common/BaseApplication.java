@@ -9,19 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
-import org.springframework.boot.context.event.ApplicationFailedEvent;
-import org.springframework.boot.context.event.ApplicationPreparedEvent;
-import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * 应用程序基类
  * Created by shicy on 2017/8/30
  */
-public class BaseApplication {
+@SuppressWarnings("unused")
+public class BaseApplication  {
 
     private Logger logger = LoggerFactory.getLogger(BaseApplication.class);
 
@@ -31,99 +27,70 @@ public class BaseApplication {
     // 当前应用程序上下文
     private static ApplicationContext context;
 
+    private static BaseApplication instance;
+
     /**
-     * 构造方法
+     * 开始构建应用
      */
-    public BaseApplication() {
-        application = new SpringApplication(this.getClass());
+    public static void startup(Class appClass, String[] args) {
+        BaseApplication.setApplication(new SpringApplication(appClass));
+        BaseApplication.getApplication().run(args);
     }
 
     /**
      * 获取应用程序实例
-     * @return
      */
     public static SpringApplication getApplication() {
         return application;
     }
 
     /**
-     * 开始运行
-     * @param args
+     * 设置应用程序实例
      */
-    public void run(String[] args) {
-        // 设置监听器
-        this.setListeners(application);
-
-        // 应用程序开始运行
-        context = application.run(args);
-
-        // 更新数据库
-        this.databaseUpgrade();
-
-        // 完成
-        logger.info("ready!");
+    public static void setApplication(SpringApplication _application) {
+        System.out.println(",,,,,,,,,,,,,,,,,,,,,,,,");
+        application = _application;
+        initSpringApplication(application);
     }
 
     /**
      * 获取应用程序上下文
-     * @return
      */
     public static ApplicationContext getContext() {
         return context;
     }
 
     /**
-     * 设置监听器
-     * @param application
+     * 设置应用程序上下文
      */
-    protected void setListeners(SpringApplication application) {
-        ApplicationListener startListener = this.getStartListener();
-        if (startListener != null)
-            application.addListeners(startListener);
+    public static void setContext(ApplicationContext _context) {
+        System.out.println("...........................");
+        context = _context;
+    }
 
-        ApplicationListener environmentListener = this.getEnvironmentListener();
-        if (environmentListener != null)
-            application.addListeners(environmentListener);
+    private static void initSpringApplication(SpringApplication application) {
+        application.addListeners(new AppStartListener());
+        application.addListeners(new AppEnvironmentListener());
+        application.addListeners(new AppContextListener());
+        application.addListeners(new AppFailedListener());
+    }
 
-        ApplicationListener contextListener = this.getContextListener();
-        if (contextListener != null)
-            application.addListeners(contextListener);
-
-        ApplicationListener failedListener = this.getFailedListener();
-        if (failedListener != null)
-            application.addListeners(failedListener);
+    public BaseApplication() {
+        super();
+        instance = this;
     }
 
     /**
-     * 获取启动监听器
-     * @return
+     * 开始运行
      */
-    protected ApplicationListener<ApplicationStartingEvent> getStartListener() {
-        return new AppStartListener();
-    }
+    public void run() {
+        System.out.println("rrrrrrrrrrrrrrrrrrrrr");
+        System.out.println("eeeeeeeeeeeeeeeeee" + context.toString());
 
-    /**
-     * 获取环境监听器
-     * @return
-     */
-    protected ApplicationListener<ApplicationEnvironmentPreparedEvent> getEnvironmentListener() {
-        return new AppEnvironmentListener();
-    }
+        // 更新数据库
+        this.databaseUpgrade();
 
-    /**
-     * 获取上下文监听器
-     * @return
-     */
-    protected ApplicationListener<ApplicationPreparedEvent> getContextListener() {
-        return new AppContextListener();
-    }
-
-    /**
-     * 获取异常监听器
-     * @return
-     */
-    protected ApplicationListener<ApplicationFailedEvent> getFailedListener() {
-        return new AppFailedListener();
+        logger.info("ready!");
     }
 
     /**
@@ -132,8 +99,10 @@ public class BaseApplication {
     private void databaseUpgrade() {
         try {
             JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
+            logger.info("JdbcTemplate: " + jdbcTemplate);
             if (jdbcTemplate != null) {
                 String scriptResource = this.getDbScriptResource();
+                logger.info("SqlScripts: " + scriptResource);
                 if (scriptResource != null) {
                     new DbUpgrade(jdbcTemplate, scriptResource).run();
                 }

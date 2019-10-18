@@ -1,5 +1,6 @@
 package org.scy.common.web.listener;
 
+import org.scy.common.BaseApplication;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -12,6 +13,7 @@ public class AppContextListener implements ApplicationListener<ApplicationPrepar
 
     public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {
 //        System.out.println("上下文准备完成。");
+        BaseApplication.setContext(applicationPreparedEvent.getApplicationContext());
     }
 
 }
