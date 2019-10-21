@@ -48,7 +48,6 @@ public class BaseApplication  {
      * 设置应用程序实例
      */
     public static void setApplication(SpringApplication _application) {
-        System.out.println(",,,,,,,,,,,,,,,,,,,,,,,,");
         application = _application;
         initSpringApplication(application);
     }
@@ -64,7 +63,6 @@ public class BaseApplication  {
      * 设置应用程序上下文
      */
     public static void setContext(ApplicationContext _context) {
-        System.out.println("...........................");
         context = _context;
     }
 
@@ -84,9 +82,6 @@ public class BaseApplication  {
      * 开始运行
      */
     public void run() {
-        System.out.println("rrrrrrrrrrrrrrrrrrrrr");
-        System.out.println("eeeeeeeeeeeeeeeeee" + context.toString());
-
         // 更新数据库
         this.databaseUpgrade();
 
@@ -99,7 +94,7 @@ public class BaseApplication  {
     private void databaseUpgrade() {
         try {
             JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
-            logger.info("JdbcTemplate: " + jdbcTemplate);
+//            logger.info("JdbcTemplate: " + jdbcTemplate);
             if (jdbcTemplate != null) {
                 String scriptResource = this.getDbScriptResource();
                 logger.info("SqlScripts: " + scriptResource);
