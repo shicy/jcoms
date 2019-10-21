@@ -76,12 +76,13 @@ public class BaseApplication  {
     public BaseApplication() {
         super();
         instance = this;
+        this.run();
     }
 
     /**
      * 开始运行
      */
-    public void run() {
+    protected void run() {
         // 更新数据库
         this.databaseUpgrade();
 
