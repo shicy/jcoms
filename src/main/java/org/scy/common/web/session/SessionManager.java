@@ -125,8 +125,8 @@ public final class SessionManager {
             throw new RuntimeException("登录用户名称不能为空");
         params.put("username", StringUtils.trimToEmpty(username));
         params.put("password", StringUtils.trimToEmpty(password));
-        params.put("loginType", loginType < 0 ? 0 : loginType);
-        params.put("expires", expires < 0 ? 0 : expires);
+        params.put("loginType", Math.max(0, loginType));
+        params.put("expires", Math.max(0, expires));
 
         HttpResult result = sessionClient.login(params);
         if (result.getCode() == HttpResult.OK) {
@@ -242,7 +242,7 @@ public final class SessionManager {
      */
     public static boolean isPlatform() {
         Account account = getAccount();
-        return account != null &&  Const.PLATFORM_CODE.equals(account.getCode());
+        return account != null && Const.PLATFORM_CODE.equals(account.getCode());
     }
 
 }
