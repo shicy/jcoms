@@ -109,7 +109,7 @@ public class DbUpgrade /*extends Thread*/ {
      */
     private void doUpgrade() {
         URL[] scripts = getScriptResources();
-        if (scripts != null && scripts.length > 0) {
+        if (scripts.length > 0) {
             // 开启事务管理
             DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
             transactionManager.setDataSource(jdbcTemplate.getDataSource());
