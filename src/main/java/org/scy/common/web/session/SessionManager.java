@@ -6,9 +6,11 @@ import org.scy.common.web.controller.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +33,7 @@ public final class SessionManager {
 
     private final static ThreadLocal<Account> accountInfo = new ThreadLocal<Account>();
     private final static ThreadLocal<User> userInfo = new ThreadLocal<User>();
+    private final static ThreadLocal<Long> accessTokenTime = new ThreadLocal<Long>();
 
     // Token 属性名称
     public final static String TOKEN_KEY = "token";
@@ -41,6 +44,12 @@ public final class SessionManager {
     private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
     private static SessionClient sessionClient;
+
+    @Value("${app.code}")
+    private static String AppId;
+
+    @Value("${app.secret}")
+    private static String AppSecret;
 
     @Autowired(required = false)
     private SessionClient sessionClientTemp;
@@ -62,6 +71,36 @@ public final class SessionManager {
      */
     public static String getAccessToken() {
         return accessToken.get();
+    }
+
+    /**
+     * 试图刷新 AccessToken
+     * AccessToken 具有15分钟有效期，调用该方法将择机刷新 AccessToken
+     */
+    public static void tryRefreshAccessToken() {
+        if (StringUtils.isNotBlank(AppId) && StringUtils.isNotBlank(AppSecret)) {
+            Long time = new Date().getTime();
+            if (accessToken.get() != null) {
+                Long lastTime = accessTokenTime.get();
+                if (lastTime != null && time - lastTime < 15 * 60 * 1000)
+                    return ;
+            }
+
+            accessToken.remove();
+            accessTokenTime.set(time);
+
+            HttpResult result = sessionClient.getAccessToken(AppId, AppSecret);
+            if (result.getCode() == HttpResult.OK) {
+                accessToken.set("" + result.getData());
+            }
+            else {
+                logger.error(result.getCode() + "-" + result.getMsg());
+                throw new RuntimeException(result.getMsg());
+            }
+        }
+        else {
+            logger.warn("缺少配置项：app.code 或 app.secret！");
+        }
     }
 
     /**
@@ -128,6 +167,7 @@ public final class SessionManager {
         params.put("loginType", Math.max(0, loginType));
         params.put("expires", Math.max(0, expires));
 
+        tryRefreshAccessToken();
         HttpResult result = sessionClient.login(params);
         if (result.getCode() == HttpResult.OK) {
             token.set("" + result.getData());
@@ -145,6 +185,7 @@ public final class SessionManager {
     public static void doLogout() {
         String _token = token.get();
         if (StringUtils.isNotBlank(_token)) {
+            tryRefreshAccessToken();
             HttpResult result = sessionClient.logout(_token);
             if (result.getCode() == HttpResult.OK) {
                 token.remove();
