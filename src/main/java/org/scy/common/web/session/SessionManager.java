@@ -3,6 +3,7 @@ package org.scy.common.web.session;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
 import org.scy.common.web.controller.HttpResult;
+import org.scy.common.web.model.ValidInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +124,17 @@ public final class SessionManager {
             return false;
         HttpResult result = sessionClient.isSessionValidate(_token);
         return "1".equals(result.getData());
+    }
+
+    /**
+     * 获取验证码信息
+     */
+    public static ValidInfo getValidCode() {
+        HttpResult result = sessionClient.getValidCode();
+        if (result.getCode() == HttpResult.OK) {
+            return result.getData(ValidInfo.class);
+        }
+        return null;
     }
 
     /**
