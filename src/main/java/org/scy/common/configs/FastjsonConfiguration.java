@@ -18,7 +18,7 @@ public class FastjsonConfiguration {
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
         fastJsonConfig.setSerializerFeatures(
-                SerializerFeature.PrettyFormat,
+//                SerializerFeature.PrettyFormat,
                 SerializerFeature.WriteMapNullValue);
 
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
