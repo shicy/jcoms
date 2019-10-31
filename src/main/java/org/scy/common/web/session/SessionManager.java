@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Session 管理类
@@ -138,49 +136,98 @@ public final class SessionManager {
     }
 
     /**
-     * 用户登录，session无期限
+     * 用户登录，可以使用任何一种登录方式
      * @param username 登录名称
      * @param password 登录密码
+     * @param validCodeId 验证码编号
+     * @param validCode 验证码
      * @return 返回用户token信息
      */
-    public static String doLogin(String username, String password) {
-        return doLogin(username, password, 0);
+    public static String doLogin(String username, String password, String validCodeId, String validCode) {
+        return doLogin(username, password, validCodeId, validCode, 0);
     }
 
     /**
      * 用户登录，可以使用任何一种登录方式
      * @param username 登录名称
      * @param password 登录密码
-     * @param expires 自动过期时间（秒）
+     * @param validCodeId 验证码编号
+     * @param validCode 验证码
+     * @param expires 过期时间（秒）
      * @return 返回用户token信息
      */
-    public static String doLogin(String username, String password, int expires) {
-        int loginType = Const.LOGIN_TYPE_NAME | Const.LOGIN_TYPE_MOBILE | Const.LOGIN_TYPE_EMAIL;
-        return doLogin(username, password, loginType, expires);
+    public static String doLogin(String username, String password, String validCodeId, String validCode, int expires) {
+        LoginForm loginForm = new LoginForm();
+        loginForm.setUsername(username);
+        loginForm.setPassword(password);
+        loginForm.setValidCodeId(validCodeId);
+        loginForm.setValidCode(validCode);
+        loginForm.setLoginType(Const.LOGIN_TYPE_NAME | Const.LOGIN_TYPE_MOBILE | Const.LOGIN_TYPE_EMAIL);
+        loginForm.setExpires(expires);
+        return doLogin(loginForm);
     }
 
     /**
      * 用户登录
-     * @param username 登录名称，用户名、手机号码或邮箱
-     * @param password 登录密码
-     * @param loginType 登录方式
-     * @param expires 自动过期时间（秒），0为无限期
+     * @param loginForm 登录信息
      * @return 返回用户token信息
      */
-    public static String doLogin(String username, String password, int loginType, int expires) {
+    public static String doLogin(LoginForm loginForm) {
         if (StringUtils.isNotBlank(token.get()))
             doLogout();
 
-        Map<String, Object> params = new HashMap<String, Object>();
-        if (StringUtils.isBlank(username))
-            throw new RuntimeException("登录用户名称不能为空");
-        params.put("username", StringUtils.trimToEmpty(username));
-        params.put("password", StringUtils.trimToEmpty(password));
-        params.put("loginType", Math.max(0, loginType));
-        params.put("expires", Math.max(0, expires));
+        if (loginForm == null)
+            throw new RuntimeException("没有登录信息");
 
         tryRefreshAccessToken();
-        HttpResult result = sessionClient.login(params);
+        HttpResult result = sessionClient.login(loginForm);
+        if (result.getCode() == HttpResult.OK) {
+            token.set("" + result.getData());
+        }
+        else {
+            logger.error(result.getCode() + "-" + result.getMsg());
+        }
+
+        return token.get();
+    }
+
+    /**
+     * 免密登录
+     * @param username 登录名称
+     * @return 返回用户token信息
+     */
+    public static String doLoginWithoutPassword(String username) {
+        return doLoginWithoutPassword(username, 0);
+    }
+
+    /**
+     * 免密登录
+     * @param username 登录名称
+     * @param expires 过期时间（秒）
+     * @return 返回用户token信息
+     */
+    public static String doLoginWithoutPassword(String username, int expires) {
+        LoginForm loginForm = new LoginForm();
+        loginForm.setUsername(username);
+        loginForm.setLoginType(Const.LOGIN_TYPE_NAME | Const.LOGIN_TYPE_MOBILE | Const.LOGIN_TYPE_EMAIL);
+        loginForm.setExpires(expires);
+        return doLoginWithoutPassword(loginForm);
+    }
+
+    /**
+     * 免密登录
+     * @param loginForm 登录信息
+     * @return 返回用户token信息
+     */
+    public static String doLoginWithoutPassword(LoginForm loginForm) {
+        if (StringUtils.isNotBlank(token.get()))
+            doLogout();
+
+        if (loginForm == null)
+            throw new RuntimeException("没有登录信息");
+
+        tryRefreshAccessToken();
+        HttpResult result = sessionClient.loginWithoutPassword(loginForm);
         if (result.getCode() == HttpResult.OK) {
             token.set("" + result.getData());
         }

@@ -2,9 +2,10 @@ package org.scy.common.web.session;
 
 import org.scy.common.web.controller.HttpResult;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Session管理客户端
@@ -48,16 +49,19 @@ public interface SessionClient {
 
     /**
      * 登录
-     * -param username 用户名称、手机号或邮箱
-     * -param password 登录密码
-     * -param expires 有效期（秒），大于零时有效，否则无限期
-     * -param loginType 登录方式，默认所有登录方式
-     * -param validCode 验证码，使用“/login/code”获取登录验证码
-     * -param validCodeId 验证码编号，获取验证码时一起返回
+     * -param loginForm 登录信息
      * @return 登录成功将返回用户token信息
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    HttpResult login(@RequestBody Map<String, Object> params);
+    HttpResult login(@RequestBody LoginForm loginForm);
+
+    /**
+     * 登录
+     * -param loginForm 登录信息
+     * @return 登录成功将返回用户token信息
+     */
+    @RequestMapping(value = "/loginWithoutPassword", method = RequestMethod.POST)
+    HttpResult loginWithoutPassword(@RequestBody LoginForm loginForm);
 
     /**
      * 获取登录验证码

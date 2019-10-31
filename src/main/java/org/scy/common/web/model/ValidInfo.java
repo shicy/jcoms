@@ -10,18 +10,18 @@ public class ValidInfo implements Serializable {
 
     private static final long serialVersionUID = 1002019102816500000L;
 
-    // 验证码
-    private String code;
+    // 验证码编号
+    private String codeId;
 
     // 图片
     private String imageUrl;
 
-    public String getCode() {
-        return code;
+    public String getCodeId() {
+        return codeId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCodeId(String codeId) {
+        this.codeId = codeId;
     }
 
     public String getImageUrl() {
