@@ -46,7 +46,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
             }
 
             if (SessionManager.uuid.get() == null) {
-                String uuid = StringUtilsEx.getRandomString(64);
+                String uuid = StringUtilsEx.getRandomString(32);
                 SessionManager.uuid.set(uuid);
                 Cookie cookie = new Cookie("uuid", uuid);
                 cookie.setHttpOnly(true);

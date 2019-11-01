@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 /**
@@ -125,14 +127,29 @@ public final class SessionManager {
     }
 
     /**
+     * 获取验证码信息（默认15分钟）
+     */
+    public static ValidInfo getValidateInfo() {
+        return getValidateInfo(0);
+    }
+
+    /**
      * 获取验证码信息
      */
-    public static ValidInfo getValidCode() {
-        HttpResult result = sessionClient.getValidCode();
+    public static ValidInfo getValidateInfo(int expires) {
+        HttpResult result = sessionClient.getValidateInfo(expires);
         if (result.getCode() == HttpResult.OK) {
             return result.getData(ValidInfo.class);
         }
         return null;
+    }
+
+    /**
+     * 验证码校验
+     */
+    public static boolean checkValidateCode(String codeId, String code) {
+        HttpResult result = sessionClient.checkValidateCode(codeId, code);
+        return "1".equals(result.getData());
     }
 
     /**
@@ -327,6 +344,38 @@ public final class SessionManager {
             }
         }
         return user != null && user.getId() > 0 ? user : null;
+    }
+
+    /**
+     * 设置当前用户
+     * @param _token 当前用户 Token 信息
+     * @param _userInfo 用户信息
+     * @param response Http响应对象
+     */
+    public static void setUser(String _token, User _userInfo, HttpServletResponse response) {
+        setUser(_token, _userInfo, response, 0);
+    }
+
+    /**
+     * 设置当前用户
+     * @param _token 当前用户 Token 信息
+     * @param _userInfo 用户信息
+     * @param response Http响应对象
+     * @param expires cookie 过期时间（秒）
+     */
+    public static void setUser(String _token, User _userInfo, HttpServletResponse response, int expires) {
+        token.set(_token);
+        userInfo.set(_userInfo);
+        if (response != null) {
+            Cookie cookie = new Cookie("token", _token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            if (StringUtils.isBlank(_token))
+                cookie.setMaxAge(0);
+            else
+                cookie.setMaxAge(expires == 0 ? Integer.MAX_VALUE : expires);
+            response.addCookie(cookie);
+        }
     }
 
     /**
