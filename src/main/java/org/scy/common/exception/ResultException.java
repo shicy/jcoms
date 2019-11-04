@@ -14,6 +14,10 @@ public class ResultException extends RuntimeException {
         this(HttpResult.SERVERERROR);
     }
 
+    public ResultException(HttpResult httpResult) {
+        this(httpResult.getCode(), httpResult.getMsg());
+    }
+
     public ResultException(int code) {
         this(code, HttpResult.getResourceMessage(code));
     }

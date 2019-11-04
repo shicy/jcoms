@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.scy.common.ds.PageInfo;
 import org.scy.common.utils.MapUtilsEx;
 
+import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -158,10 +160,27 @@ public class HttpResult {
     }
 
     /**
+     * 获取对象列表
+     */
+    @JSONField(serialize = false)
+    public <T> T[] getDatas(Class<T> entityCls) {
+        if (data != null) {
+            try {
+                List<T> list = (List<T>)data;
+                return list.toArray((T[])Array.newInstance(entityCls, 0));
+            }
+            catch (Exception e) {
+                // .
+            }
+        }
+        return null;
+    }
+
+    /**
      * 获取配置资源文件消息
      * @param code 消息编码
      */
-    public static String  getResourceMessage(int code) {
+    public static String getResourceMessage(int code) {
         return getResourceMessage(code, "");
     }
 
