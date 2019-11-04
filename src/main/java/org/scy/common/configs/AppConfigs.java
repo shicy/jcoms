@@ -11,29 +11,28 @@ import org.springframework.stereotype.Component;
 //@ConfigurationProperties(prefix = "app")
 public class AppConfigs {
 
+    // 应用编号
+    @Value("${app.code:#{null}}")
+    private String appId;
+
+    // 应用密钥
+    @Value("${app.secret:#{null}}")
+    private String appSecret;
+
     // 登录地址
-    @Value("${app.loginUrl:null}")
+    @Value("${app.loginUrl:#{null}}")
     private String loginUrl;
 
-    // Session 服务器地址
-    @Value("${app.session-service.url:null}")
-    private String sessionServiceUrl;
-
-
-    /**
-     * 获取登录地址
-     * @return
-     */
-    public String getLoginUrl() {
-        return loginUrl;
+    public String getAppId() {
+        return appId;
     }
 
-    /**
-     * 获取 Session 服务器地址
-     * @return
-     */
-    public String getSessionServiceUrl() {
-        return sessionServiceUrl;
+    public String getAppSecret() {
+        return appSecret;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
     }
 
 }

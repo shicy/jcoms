@@ -18,7 +18,7 @@ public interface SessionClient {
      * 获取 AccessToken
      * @return 返回 AccessToken
      */
-    @RequestMapping(value = "/token/{code}/{secret}", method = RequestMethod.GET)
+    @RequestMapping(value = "/token/access/{code}/{secret}", method = RequestMethod.GET)
     HttpResult getAccessToken(@PathVariable("code") String code, @PathVariable("secret") String secret);
 
     /**

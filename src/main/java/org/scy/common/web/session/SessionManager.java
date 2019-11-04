@@ -2,6 +2,7 @@ package org.scy.common.web.session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
+import org.scy.common.configs.AppConfigs;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.common.web.model.ValidInfo;
 import org.slf4j.Logger;
@@ -44,19 +45,17 @@ public final class SessionManager {
 
     private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
+    private static AppConfigs appConfigs;
     private static SessionClient sessionClient;
 
-    @Value("${app.code}")
-    private static String AppId;
-
-    @Value("${app.secret}")
-    private static String AppSecret;
-
+    @Autowired(required = false)
+    private AppConfigs appConfigsTemp;
     @Autowired(required = false)
     private SessionClient sessionClientTemp;
 
     @PostConstruct
     public void init() {
+        appConfigs = appConfigsTemp;
         sessionClient = sessionClientTemp;
     }
 
@@ -79,7 +78,9 @@ public final class SessionManager {
      * AccessToken 具有15分钟有效期，调用该方法将择机刷新 AccessToken
      */
     public static void tryRefreshAccessToken() {
-        if (StringUtils.isNotBlank(AppId) && StringUtils.isNotBlank(AppSecret)) {
+        String appId = appConfigs.getAppId();
+        String appSecret = appConfigs.getAppSecret();
+        if (StringUtils.isNotBlank(appId) && StringUtils.isNotBlank(appSecret)) {
             Long time = new Date().getTime();
             if (accessToken.get() != null) {
                 Long lastTime = accessTokenTime.get();
@@ -90,7 +91,7 @@ public final class SessionManager {
             accessToken.remove();
             accessTokenTime.set(time);
 
-            HttpResult result = sessionClient.getAccessToken(AppId, AppSecret);
+            HttpResult result = sessionClient.getAccessToken(appId, appSecret);
             if (result.getCode() == HttpResult.OK) {
                 accessToken.set("" + result.getData());
             }
@@ -100,7 +101,7 @@ public final class SessionManager {
             }
         }
         else {
-            logger.warn("缺少配置项：app.code 或 app.secret！");
+//            logger.warn("缺少配置项：app.code 或 app.secret！");
         }
     }
 
@@ -196,7 +197,7 @@ public final class SessionManager {
         if (loginForm == null)
             throw new RuntimeException("没有登录信息");
 
-        tryRefreshAccessToken();
+//        tryRefreshAccessToken();
         HttpResult result = sessionClient.login(loginForm);
         if (result.getCode() == HttpResult.OK) {
             token.set("" + result.getData());
@@ -243,7 +244,7 @@ public final class SessionManager {
         if (loginForm == null)
             throw new RuntimeException("没有登录信息");
 
-        tryRefreshAccessToken();
+//        tryRefreshAccessToken();
         HttpResult result = sessionClient.loginWithoutPassword(loginForm);
         if (result.getCode() == HttpResult.OK) {
             token.set("" + result.getData());
@@ -261,7 +262,7 @@ public final class SessionManager {
     public static void doLogout() {
         String _token = token.get();
         if (StringUtils.isNotBlank(_token)) {
-            tryRefreshAccessToken();
+//            tryRefreshAccessToken();
             HttpResult result = sessionClient.logout(_token);
             if (result.getCode() == HttpResult.OK) {
                 token.remove();

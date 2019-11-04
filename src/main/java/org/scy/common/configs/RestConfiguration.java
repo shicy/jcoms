@@ -25,6 +25,19 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class RestConfiguration {
 
+    private static String[] accessTokenExcludes = {
+        "/token/access/.*",
+        "/valid/access/.*"
+    };
+
+    private static boolean isAccessTokenExcluded(String url) {
+        for (String pattern: accessTokenExcludes) {
+            if (url.matches(pattern))
+                return true;
+        }
+        return false;
+    }
+
     @Bean
     @ConditionalOnMissingBean({RestOperations.class, RestTemplate.class})
     public RestOperations restOperations() {
@@ -55,6 +68,8 @@ public class RestConfiguration {
     public RequestInterceptor requestInterceptor() {
         return new RequestInterceptor() {
             public void apply(RequestTemplate requestTemplate) {
+                if (!isAccessTokenExcluded(requestTemplate.url()))
+                    SessionManager.tryRefreshAccessToken();
                 String accessToken = SessionManager.accessToken.get();
                 if (StringUtils.isNotBlank(accessToken))
                     requestTemplate.header(SessionManager.ACCESS_TOKEN_KEY, accessToken);
