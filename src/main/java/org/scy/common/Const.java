@@ -29,7 +29,7 @@ public final class Const {
     public final static short LOGIN_TYPE_MOBILE = 2;
 
     // 邮箱登录
-    public final static short LOGIN_TYPE_EMAIL = 3;
+    public final static short LOGIN_TYPE_EMAIL = 4;
 
     // 参数错误
     public final static short MSG_CODE_PARAMINVALID  = 1000;
