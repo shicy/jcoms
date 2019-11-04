@@ -132,7 +132,7 @@ public class BaseModel implements Serializable {
      * 设置更新时间
      */
     public void setUpdateTime(Long updateTime) {
-        this.updateTime = updateTime > 0 ? updateTime : null;
+        this.updateTime = updateTime;
     }
 
     /**
