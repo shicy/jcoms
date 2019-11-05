@@ -8,7 +8,6 @@ import org.scy.common.web.model.ValidInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,29 +23,26 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public final class SessionManager {
 
+    public final static String TOKEN_KEY = "token";
+    public final static String ACCESS_TOKEN_KEY = "X-Access-Token";
+
     // 用户唯一编号，一个客户端一个编号
     public final static ThreadLocal<String> uuid = new ThreadLocal<String>();
-
-    // 用户登录信息
     public final static ThreadLocal<String> token = new ThreadLocal<String>();
-
-    // 接口访问权限口令
     public final static ThreadLocal<String> accessToken = new ThreadLocal<String>();
 
     private final static ThreadLocal<Account> accountInfo = new ThreadLocal<Account>();
     private final static ThreadLocal<User> userInfo = new ThreadLocal<User>();
-    private final static ThreadLocal<Long> accessTokenTime = new ThreadLocal<Long>();
-
-    // Token 属性名称
-    public final static String TOKEN_KEY = "token";
-
-    // AccessToken 属性名称
-    public final static String ACCESS_TOKEN_KEY = "X-Access-Token";
 
     private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
     private static AppConfigs appConfigs;
     private static SessionClient sessionClient;
+
+    // 当前应用程序获得的 AccessToken，用于访问平台账户系统
+    // 需要注册一个平台账户，配置好${app.code}和${app.secret}
+    private static String myAccessToken = null;
+    private static long myAccessTokenTime = 0L;
 
     @Autowired(required = false)
     private AppConfigs appConfigsTemp;
@@ -60,49 +56,29 @@ public final class SessionManager {
     }
 
     /**
-     * 获取当前用户的 Token 信息
+     * 获取应用程序 AccessToken，到期自动刷新
      */
-    public static String getToken() {
-        return token.get();
-    }
-
-    /**
-     * 获取当前用户的 AccessToken 信息
-     */
-    public static String getAccessToken() {
-        return accessToken.get();
-    }
-
-    /**
-     * 试图刷新 AccessToken
-     * AccessToken 具有15分钟有效期，调用该方法将择机刷新 AccessToken
-     */
-    public static void tryRefreshAccessToken() {
+    public static String getMyAccessToken() {
         String appId = appConfigs.getAppId();
         String appSecret = appConfigs.getAppSecret();
         if (StringUtils.isNotBlank(appId) && StringUtils.isNotBlank(appSecret)) {
-            Long time = new Date().getTime();
-            if (accessToken.get() != null) {
-                Long lastTime = accessTokenTime.get();
-                if (lastTime != null && time - lastTime < 15 * 60 * 1000)
-                    return ;
-            }
+            long time = new Date().getTime();
+            if (myAccessToken != null && time - myAccessTokenTime < 15 * 60 * 1000)
+                return myAccessToken;
 
-            accessToken.remove();
-            accessTokenTime.set(time);
+            myAccessToken = null;
+            myAccessTokenTime = time;
 
             HttpResult result = sessionClient.getAccessToken(appId, appSecret);
             if (result.getCode() == HttpResult.OK) {
-                accessToken.set("" + result.getData());
+                myAccessToken = "" + result.getData();
             }
             else {
-                logger.error(result.getCode() + "-" + result.getMsg());
+                logger.error("getMyAccessToken error: [" + result.getCode() + "]" + result.getMsg());
                 throw new RuntimeException(result.getMsg());
             }
         }
-        else {
-//            logger.warn("缺少配置项：app.code 或 app.secret！");
-        }
+        return myAccessToken;
     }
 
     /**
@@ -197,13 +173,13 @@ public final class SessionManager {
         if (loginForm == null)
             throw new RuntimeException("没有登录信息");
 
-//        tryRefreshAccessToken();
         HttpResult result = sessionClient.login(loginForm);
         if (result.getCode() == HttpResult.OK) {
             token.set("" + result.getData());
         }
         else {
-            logger.error(result.getCode() + "-" + result.getMsg());
+            logger.error("doLogin error: [" + result.getCode() + "]" + result.getMsg());
+            throw new RuntimeException(result.getMsg());
         }
 
         return token.get();
@@ -244,13 +220,13 @@ public final class SessionManager {
         if (loginForm == null)
             throw new RuntimeException("没有登录信息");
 
-//        tryRefreshAccessToken();
         HttpResult result = sessionClient.loginWithoutPassword(loginForm);
         if (result.getCode() == HttpResult.OK) {
             token.set("" + result.getData());
         }
         else {
-            logger.error(result.getCode() + "-" + result.getMsg());
+            logger.error("doLoginWithoutPassword error: [" + result.getCode() + "]" + result.getMsg());
+            throw new RuntimeException(result.getMsg());
         }
 
         return token.get();
@@ -262,14 +238,14 @@ public final class SessionManager {
     public static void doLogout() {
         String _token = token.get();
         if (StringUtils.isNotBlank(_token)) {
-//            tryRefreshAccessToken();
             HttpResult result = sessionClient.logout(_token);
             if (result.getCode() == HttpResult.OK) {
                 token.remove();
                 userInfo.remove();
             }
             else {
-                logger.error(result.getCode() + "-" + result.getMsg());
+                logger.error("doLogout error: [" + result.getCode() + "]" + result.getMsg());
+                throw new RuntimeException(result.getMsg());
             }
         }
     }
@@ -285,10 +261,6 @@ public final class SessionManager {
                 HttpResult result = sessionClient.getAccount(_token);
                 if (result.getCode() == HttpResult.OK) {
                     account = result.getData(Account.class);
-                }
-                else {
-                    account = new Account();
-                    logger.error(result.getCode() + "-" + result.getMsg());
                 }
                 accountInfo.set(account);
             }
@@ -337,10 +309,6 @@ public final class SessionManager {
                 if (result.getCode() == HttpResult.OK) {
                     user = result.getData(User.class);
                 }
-                else {
-                    user = new User();
-                    logger.error(result.getCode() + "-" + result.getMsg());
-                }
                 userInfo.set(user);
             }
         }
@@ -368,7 +336,7 @@ public final class SessionManager {
         token.set(_token);
         userInfo.set(_userInfo);
         if (response != null) {
-            Cookie cookie = new Cookie("token", _token);
+            Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, _token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             if (StringUtils.isBlank(_token))
