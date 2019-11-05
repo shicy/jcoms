@@ -1,9 +1,5 @@
 package org.scy.common.configs;
 
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
-import org.apache.commons.lang3.StringUtils;
-import org.scy.common.web.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,19 +20,6 @@ import java.util.List;
 @Configuration
 @SuppressWarnings("unused")
 public class RestConfiguration {
-
-    private static String[] accessTokenExcludes = {
-        "/token/access/.*",
-        "/valid/access/.*"
-    };
-
-    private static boolean isAccessTokenExcluded(String url) {
-        for (String pattern: accessTokenExcludes) {
-            if (url.matches(pattern))
-                return true;
-        }
-        return false;
-    }
 
     @Bean
     @ConditionalOnMissingBean({RestOperations.class, RestTemplate.class})
@@ -61,19 +44,4 @@ public class RestConfiguration {
         return restTemplate;
     }
 
-    /**
-     * 访问远程服务接口时，带上 AccessToken 头部信息
-     */
-    @Bean
-    public RequestInterceptor requestInterceptor() {
-        return new RequestInterceptor() {
-            public void apply(RequestTemplate requestTemplate) {
-                if (!isAccessTokenExcluded(requestTemplate.url()))
-                    SessionManager.tryRefreshAccessToken();
-                String accessToken = SessionManager.accessToken.get();
-                if (StringUtils.isNotBlank(accessToken))
-                    requestTemplate.header(SessionManager.ACCESS_TOKEN_KEY, accessToken);
-            }
-        };
-    }
 }

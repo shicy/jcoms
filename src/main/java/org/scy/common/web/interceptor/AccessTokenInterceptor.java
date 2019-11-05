@@ -70,7 +70,7 @@ public class AccessTokenInterceptor extends HandlerInterceptorAdapter {
             }
         }
 
-        return true;
+        return validate;
     }
 
     /**

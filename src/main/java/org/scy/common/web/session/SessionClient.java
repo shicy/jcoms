@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Session管理客户端
  * Created by shicy on 2017/9/30.
  */
-@FeignClient(name = "session-service", url = "${app.session-service.url:/}")
+@FeignClient(name = "session-service", url = "${app.session-service.url:/}",
+        configuration = {SessionClientConfiguration.class})
 public interface SessionClient {
 
     /**
