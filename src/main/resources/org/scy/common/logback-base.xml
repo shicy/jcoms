@@ -74,6 +74,7 @@
     <logger name="com.netflix.hystrix" level="info"/>
 
     <logger name="org.scy.common.ds.DbUpgrade" level="debug" additivity="false">
+        <appender-ref ref="stdout" />
         <appender-ref ref="sql_script" />
     </logger>
 
