@@ -2,10 +2,7 @@ package org.scy.common.web.session;
 
 import org.scy.common.web.controller.HttpResult;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Session管理客户端
@@ -83,6 +80,6 @@ public interface SessionClient {
      * -param token 用户登录得到的token信息
      */
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    HttpResult logout(@RequestBody String token);
+    HttpResult logout(@RequestParam("token") String token);
 
 }

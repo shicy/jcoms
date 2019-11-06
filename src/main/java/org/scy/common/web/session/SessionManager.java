@@ -235,7 +235,7 @@ public final class SessionManager {
     /**
      * 用户退出登录
      */
-    public static void doLogout() {
+    public static String doLogout() {
         String _token = token.get();
         if (StringUtils.isNotBlank(_token)) {
             HttpResult result = sessionClient.logout(_token);
@@ -248,6 +248,7 @@ public final class SessionManager {
                 throw new RuntimeException(result.getMsg());
             }
         }
+        return _token;
     }
 
     /**
