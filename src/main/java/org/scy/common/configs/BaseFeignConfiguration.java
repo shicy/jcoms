@@ -23,6 +23,8 @@ public class BaseFeignConfiguration {
         ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes != null ? attributes.getRequest() : null;
         if (request != null) {
+            requestTemplate.header("Host", request.getHeader("Host"));
+            requestTemplate.header("Cookie", request.getHeader("Cookie"));
             requestTemplate.header("User-Agent", request.getHeader("User-Agent"));
             requestTemplate.header("X-Forwarded-For", HttpUtilsEx.getIP(request));
         }
