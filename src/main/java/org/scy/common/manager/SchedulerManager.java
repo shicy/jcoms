@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -77,7 +78,7 @@ public class SchedulerManager {
      * @return 任务名称
      */
     public String addScheduleJob(Class<? extends Job> jobCls, Trigger trigger) {
-        return addScheduleJob(jobCls, trigger, null);
+        return addScheduleJob(jobCls, trigger, new HashMap<String, Object>());
     }
 
     /**
