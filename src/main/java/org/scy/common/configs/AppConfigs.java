@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 //@ConfigurationProperties(prefix = "app")
 public class AppConfigs {
 
+    @Value("${app.version:0.0.1}")
+    private String version;
+
     // 应用编号
     @Value("${app.code:#{null}}")
     private String appId;
@@ -22,6 +25,10 @@ public class AppConfigs {
     // 登录地址
     @Value("${app.loginUrl:#{null}}")
     private String loginUrl;
+
+    public String getVersion() {
+        return version;
+    }
 
     public String getAppId() {
         return appId;

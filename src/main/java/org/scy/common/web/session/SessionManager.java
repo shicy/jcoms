@@ -1,6 +1,7 @@
 package org.scy.common.web.session;
 
 import org.apache.commons.lang3.StringUtils;
+import org.scy.common.BaseApplication;
 import org.scy.common.Const;
 import org.scy.common.configs.AppConfigs;
 import org.scy.common.web.controller.HttpResult;
@@ -36,7 +37,6 @@ public final class SessionManager {
 
     private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
-    private static AppConfigs appConfigs;
     private static SessionClient sessionClient;
 
     // 当前应用程序获得的 AccessToken，用于访问平台账户系统
@@ -45,13 +45,10 @@ public final class SessionManager {
     private static long myAccessTokenTime = 0L;
 
     @Autowired(required = false)
-    private AppConfigs appConfigsTemp;
-    @Autowired(required = false)
     private SessionClient sessionClientTemp;
 
     @PostConstruct
     public void init() {
-        appConfigs = appConfigsTemp;
         sessionClient = sessionClientTemp;
     }
 
@@ -59,6 +56,7 @@ public final class SessionManager {
      * 获取应用程序 AccessToken，到期自动刷新
      */
     public static String getMyAccessToken() {
+        AppConfigs appConfigs = BaseApplication.getAppConfigs();
         String appId = appConfigs.getAppId();
         String appSecret = appConfigs.getAppSecret();
         if (StringUtils.isNotBlank(appId) && StringUtils.isNotBlank(appSecret)) {

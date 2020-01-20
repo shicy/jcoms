@@ -1,5 +1,6 @@
 package org.scy.common;
 
+import org.scy.common.configs.AppConfigs;
 import org.scy.common.ds.DbUpgrade;
 import org.scy.common.web.listener.AppContextListener;
 import org.scy.common.web.listener.AppEnvironmentListener;
@@ -8,9 +9,12 @@ import org.scy.common.web.listener.AppStartListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.annotation.PostConstruct;
 
 /**
  * 应用程序基类
@@ -27,12 +31,18 @@ public class BaseApplication  {
     // 当前应用程序上下文
     private static ApplicationContext context;
 
-    private static BaseApplication instance;
+//    private static BaseApplication instance;
+
+    // 应用程序配置信息
+    private static AppConfigs appConfigs;
+
+    @Autowired(required = false)
+    private AppConfigs appConfigsTemp;
 
     /**
      * 开始构建应用
      */
-    public static void startup(Class appClass, String[] args) {
+    public static void startup(Class<?> appClass, String[] args) {
         BaseApplication.setApplication(new SpringApplication(appClass));
         BaseApplication.getApplication().run(args);
     }
@@ -50,6 +60,13 @@ public class BaseApplication  {
     public static void setApplication(SpringApplication _application) {
         application = _application;
         initSpringApplication(application);
+    }
+
+    /**
+     * 获取程序配置信息
+     */
+    public static AppConfigs getAppConfigs() {
+        return  appConfigs;
     }
 
     /**
@@ -73,9 +90,14 @@ public class BaseApplication  {
         application.addListeners(new AppFailedListener());
     }
 
-    public BaseApplication() {
-        super();
-        instance = this;
+//    public BaseApplication() {
+//        super();
+//        instance = this;
+//    }
+
+    @PostConstruct
+    public void init() {
+        appConfigs = appConfigsTemp;
         this.run();
     }
 
