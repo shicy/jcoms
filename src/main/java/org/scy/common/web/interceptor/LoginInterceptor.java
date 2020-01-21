@@ -41,7 +41,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             }
 
             Method method = ((HandlerMethod)handler).getMethod();
-            Class cls = method.getDeclaringClass();
+            Class<?> cls = method.getDeclaringClass();
             if (method.isAnnotationPresent(Auth.class) ||  cls.isAnnotationPresent(Auth.class)) {
                 if (!SessionManager.isSessionValidate()) {
                     if (method.isAnnotationPresent(ResponseBody.class) || cls.isAnnotationPresent(ResponseBody.class)) {
