@@ -51,9 +51,9 @@ public class AccessTokenInterceptor extends HandlerInterceptorAdapter {
                 accessToken = method.getAnnotation(AccessToken.class);
             }
             else {
-                Class cls = method.getDeclaringClass();
+                Class<?> cls = method.getDeclaringClass();
                 if (cls.isAnnotationPresent(AccessToken.class))
-                    accessToken = (AccessToken) cls.getAnnotation(AccessToken.class);
+                    accessToken = cls.getAnnotation(AccessToken.class);
             }
 
             if (accessToken != null) {

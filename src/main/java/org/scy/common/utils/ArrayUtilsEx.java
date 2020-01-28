@@ -102,7 +102,7 @@ public abstract class ArrayUtilsEx {
         return result.toString();
     }
 
-    public static String join(Collection collection, String sep) {
+    public static String join(Collection<?> collection, String sep) {
         if (collection != null)
             return join(collection.toArray(), sep);
         return "";
@@ -111,7 +111,7 @@ public abstract class ArrayUtilsEx {
     /**
      * 输出列表
      */
-    public static void print(List list) {
+    public static void print(List<?> list) {
         if (list != null && list.size() > 0) {
             for (Object obj: list) {
                 System.out.println(obj.toString());
@@ -169,7 +169,9 @@ public abstract class ArrayUtilsEx {
                 if (o2 == null)
                     return desc ? 1 : -1;
                 o1 = StringUtilsEx.toHanYuPinYin(o1, true);
+                o1 = o1 == null ? "" : o1;
                 o2 = StringUtilsEx.toHanYuPinYin(o2, true);
+                o2 = o2 == null ? "" : o2;
                 int v = o1.compareTo(o2);
                 return v * (desc ? -1 : 1);
             }
@@ -213,9 +215,7 @@ public abstract class ArrayUtilsEx {
     public static <T> List<T> toList(T[] objs) {
         List<T> list = new ArrayList<T>();
         if (objs != null) {
-            for (T obj: objs) {
-                list.add(obj);
-            }
+            Collections.addAll(list, objs);
         }
         return list;
     }
@@ -243,9 +243,8 @@ public abstract class ArrayUtilsEx {
             }
         }
         else if (arrayObj instanceof Collection) {
-            Iterator<?> iter = ((Collection<?>)arrayObj).iterator();
-            while (iter.hasNext()) {
-                ret.add(getIntValue(iter.next(), 0));
+            for (Object o : (Collection<?>) arrayObj) {
+                ret.add(getIntValue(o, 0));
             }
         }
         return ret.toArray(new Integer[0]);
@@ -419,7 +418,7 @@ public abstract class ArrayUtilsEx {
     /**
      * 数字类型转换
      */
-    public static Object transtion(Object[] objs, Class<?> cls) {
+    public static Object transition(Object[] objs, Class<?> cls) {
         if (objs == null || cls == null)
             return null;
         Object obj = null;
