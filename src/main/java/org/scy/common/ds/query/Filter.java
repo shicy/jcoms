@@ -9,7 +9,7 @@ import java.util.Collection;
  * 查询过滤条件
  * Created by shicy on 2017/10/11.
  */
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings("unused")
 public class Filter {
 
     private String field;
@@ -79,7 +79,7 @@ public class Filter {
                     result.append("(").append(getArrayValue(value)).append(")");
                 }
                 else if (value instanceof Collection) {
-                    result.append("(").append(getCollectionValue((Collection)value)).append(")");
+                    result.append("(").append(getCollectionValue((Collection<?>)value)).append(")");
                 }
                 else if (isNumberValue(value)) {
                     result.append(value);
@@ -95,7 +95,7 @@ public class Filter {
     }
 
     private String getArrayValue(Object values) {
-        StringBuilder str = new StringBuilder("");
+        StringBuilder str = new StringBuilder();
         for (int i = 0, l = Array.getLength(values); i < l; i++) {
             Object obj = Array.get(values, i);
             if (obj != null) {
@@ -112,8 +112,8 @@ public class Filter {
         return str.toString();
     }
 
-    private String getCollectionValue(Collection values) {
-        StringBuilder str = new StringBuilder("");
+    private String getCollectionValue(Collection<?> values) {
+        StringBuilder str = new StringBuilder();
         for (Object obj: values.toArray()) {
             if (obj != null) {
                 if (str.length() > 0)

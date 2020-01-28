@@ -2,7 +2,6 @@ package org.scy.common.ds.query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.ds.PageInfo;
-import org.scy.common.utils.ArrayUtilsEx;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,8 @@ public class Selector {
 
     private PageInfo pageInfo;
     private List<Filter> filters = new ArrayList<Filter>();
+    private List<Order> orders = new ArrayList<Order>();
+    private List<String> groups = new ArrayList<String>();
 
     public static Selector build(PageInfo pageInfo) {
         Selector selector = new Selector();
@@ -27,64 +28,75 @@ public class Selector {
         this.pageInfo = pageInfo;
     }
 
-    public Selector addFilter(Filter filter) {
+    public void addFilter(Filter filter) {
         if (filter != null)
             this.filters.add(filter);
-        return this;
     }
 
-    public Selector addFilter(String field, Object value) {
+    public void addFilter(String field, Object value) {
         if (StringUtils.isNotBlank(field))
             this.filters.add(new Filter(field, value));
-        return this;
     }
 
-    public Selector addFilter(String field, Object value, Oper oper) {
+    public void addFilter(String field, Object value, Oper oper) {
         if (StringUtils.isNotBlank(field))
             this.filters.add(new Filter(field, value, oper));
-        return this;
     }
 
-    public Selector addFilterNotNull(String field, Object value) {
+    public void addFilterNotNull(String field, Object value) {
         if (value != null) {
             this.addFilter(field, value);
         }
-        return this;
     }
 
-    public Selector addFilterNotNull(String field, Object value, Oper oper) {
+    public void addFilterNotNull(String field, Object value, Oper oper) {
         if (value != null) {
             this.addFilter(field, value, oper);
         }
-        return this;
     }
 
-    public Selector addFilterNotEmpty(String field, Object value) {
+    public void addFilterNotEmpty(String field, Object value) {
         if (value != null && StringUtils.isNotEmpty(value.toString())) {
             this.addFilter(field, value);
         }
-        return this;
     }
 
-    public Selector addFilterNotEmpty(String field, Object value, Oper oper) {
+    public void addFilterNotEmpty(String field, Object value, Oper oper) {
         if (value != null && StringUtils.isNotEmpty(value.toString())) {
             this.addFilter(field, value, oper);
         }
-        return this;
     }
 
-    public Selector addFilterNotBlank(String field, Object value) {
+    public void addFilterNotBlank(String field, Object value) {
         if (value != null && StringUtils.isNotBlank(value.toString())) {
             this.addFilter(field, value);
         }
-        return this;
     }
 
-    public Selector addFilterNotBlank(String field, Object value, Oper oper) {
+    public void addFilterNotBlank(String field, Object value, Oper oper) {
         if (value != null && StringUtils.isNotBlank(value.toString())) {
             this.addFilter(field, value, oper);
         }
-        return this;
+    }
+
+    public void addOrder(Order order) {
+        if (order != null)
+            this.orders.add(order);
+    }
+
+    public void addOrder(String field) {
+        this.addOrder(field, true);
+    }
+
+    public void addOrder(String field, boolean isAsc) {
+        if (StringUtils.isNotBlank(field)) {
+            this.orders.add(new Order(field, isAsc));
+        }
+    }
+
+    public void addGroup(String field) {
+        if (StringUtils.isNotBlank(field))
+            this.groups.add(field);
     }
 
     public String getWhere() {
@@ -95,31 +107,41 @@ public class Selector {
     }
 
     public String getWhereMore() {
-        List<String> wheres = new ArrayList<String>();
-
+        StringBuilder builder = new StringBuilder();
         for (Filter filter: filters) {
-            wheres.add(filter.toString());
+            builder.append("and ").append(filter.toString());
         }
-
-        if (wheres.size() > 0)
-            return "and " + ArrayUtilsEx.join(wheres, " and ");
-        return "";
+        return builder.toString();
     }
 
     public String getOrder() {
+        String order = getOrderMore();
+        if (StringUtils.isNotBlank(order))
+            return "order by " + order.substring(2);
         return "";
     }
 
     public String getOrderMore() {
-        return "";
+        StringBuilder builder = new StringBuilder();
+        for (Order order: orders) {
+            builder.append(", ").append(order.toString());
+        }
+        return builder.toString();
     }
 
     public String getGroup() {
+        String group = getGroupMore();
+        if (StringUtils.isNotBlank(group))
+            return "group by " + group.substring(2);
         return "";
     }
 
     public String getGroupMore() {
-        return "";
+        StringBuilder builder = new StringBuilder();
+        for (String field: groups) {
+            builder.append(", ").append(field);
+        }
+        return builder.toString();
     }
 
     public String getLimit() {
