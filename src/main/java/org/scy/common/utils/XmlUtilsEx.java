@@ -16,6 +16,7 @@ import java.util.*;
  * XML文档处理扩展工具
  * Created by hykj on 2017/8/15.
  */
+@SuppressWarnings({"unused", "unchecked"})
 public abstract class XmlUtilsEx {
 
     /** 默认编码方式 */
@@ -27,7 +28,7 @@ public abstract class XmlUtilsEx {
      * @return 一个XML文档
      */
     public static Document newDocument(String xmlText) throws DocumentException {
-        Document doc = null;
+        Document doc;
         if (StringUtils.isBlank(xmlText))
             doc = DocumentHelper.createDocument();
         else
@@ -158,7 +159,7 @@ public abstract class XmlUtilsEx {
         if (node.getNodeType() == org.w3c.dom.Node.TEXT_NODE) //文本节点
             buf.append(node.getNodeValue());
         else if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE){ //元素节点
-            buf.append("<" + node.getNodeName());
+            buf.append("<").append(node.getNodeName());
             NamedNodeMap nnm = node.getAttributes();
             for (int i = 0; i < nnm.getLength(); i++)
                 buf.append(toXmlString(nnm.item(i)));
@@ -167,11 +168,11 @@ public abstract class XmlUtilsEx {
             NodeList nl = node.getChildNodes(); //获取子节点列表
             for (int i = 0; i < nl.getLength(); i++)
                 buf.append(toXmlString(nl.item(i)));
-            buf.append("</" + node.getNodeName() + ">");
+            buf.append("</").append(node.getNodeName()).append(">");
         }
         else if (node.getNodeType() == org.w3c.dom.Node.ATTRIBUTE_NODE){ //属性节点
-            buf.append(" " + node.getNodeName())
-                    .append("=\"" + node.getNodeValue() + "\"");
+            buf.append(" ").append(node.getNodeName())
+                .append("=\"").append(node.getNodeValue()).append("\"");
         }
         return buf.toString();
     }
@@ -225,8 +226,8 @@ public abstract class XmlUtilsEx {
     public static List<Map<String, Object>> parseAsSimpleMaps(Document doc, String xpath) {
         List<?> nodes = doc.selectNodes(xpath);
         List<Map<String, Object>> paramList = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < nodes.size(); i++) {
-            Node node = (Node)nodes.get(i);
+        for (Object temp: nodes) {
+            Node node = (Node)temp;
             Map<String, Object> params = parseAsSimpleMap(node);
             paramList.add(params);
         }
@@ -238,7 +239,7 @@ public abstract class XmlUtilsEx {
      */
     public static Map<String, Object> parseAsComplexMap(Node node) {
         Map<String, Object> params = parseAsSimpleMap(node);
-        if (node != null && (node instanceof Element)) {
+        if (node instanceof Element) {
             Iterator<?> elems = ((Element)node).elementIterator();
             while (elems.hasNext()) {
                 Element elem = (Element)elems.next();
@@ -280,13 +281,12 @@ public abstract class XmlUtilsEx {
      * 获取某一组同类节点值数据集
      * @param doc XML文档
      * @param xpath 节点路径
-     * @return
      */
     public static String[] getSingleTexts(Document doc, String xpath) {
         List<?> nodes = doc.selectNodes(xpath);
         List<String> values = new ArrayList<String>();
-        for (int i = 0; i < nodes.size(); i++) {
-            Node node = (Node)nodes.get(i);
+        for (Object temp: nodes) {
+            Node node = (Node)temp;
             String value = getNodeText(node);
             if (value != null)
                 values.add(value);
@@ -328,8 +328,8 @@ public abstract class XmlUtilsEx {
             }
         }
         else {
-            for (int i = 0; i < nodes.size(); i++) {
-                Node node = (Node)nodes.get(i);
+            for (Object temp: nodes) {
+                Node node = (Node)temp;
                 node.setText(value);
             }
         }
@@ -349,7 +349,7 @@ public abstract class XmlUtilsEx {
             return null;
 
         if (clear) { // 清空节点
-            elem = clearElement(elem);
+            clearElement(elem);
         }
 
         // 设置子节点
@@ -365,9 +365,7 @@ public abstract class XmlUtilsEx {
      * 支持复杂元素设置，即如果elemMap中的值也是一个映射表，则作为一个子子元素设置。
      */
     public static void setSubElements(Element parentElem, Map<String, Object> elemMap) {
-        Iterator<String> paramNames = elemMap.keySet().iterator();
-        while (paramNames.hasNext()) {
-            String paramName = paramNames.next();
+        for (String paramName: elemMap.keySet()) {
             Object paramValue = elemMap.get(paramName);
             if (StringUtils.startsWith(paramName, "@")) {
                 parentElem.attributeValue(paramName.substring(1), "" + paramValue);
@@ -384,9 +382,8 @@ public abstract class XmlUtilsEx {
                 }
                 else if (paramValue instanceof Collection) {
                     removeSubNodes(parentElem, paramName);
-                    Iterator<?> values = ((Collection)paramValue).iterator();
-                    while (values.hasNext()) {
-                        parentElem.addElement(paramName).setText("" + values.next());
+                    for (Object o: (Collection<?>) paramValue) {
+                        parentElem.addElement(paramName).setText("" + o);
                     }
                 }
                 else {
@@ -400,9 +397,7 @@ public abstract class XmlUtilsEx {
      * 设置元素的属性值
      */
     public static void setNodeAttributes(Element elem, Map<String, String> attrMap) {
-        Iterator<String> paramNames = attrMap.keySet().iterator();
-        while (paramNames.hasNext()) {
-            String paramName = paramNames.next();
+        for (String paramName: attrMap.keySet()) {
             String paramValue = attrMap.get(paramName);
             elem.attributeValue(paramName, paramValue);
         }
@@ -411,13 +406,12 @@ public abstract class XmlUtilsEx {
     /**
      * 清空某个节点元素，即删除所有子节点和属性
      */
-    public static Element clearElement(Element elem) {
+    public static void clearElement(Element elem) {
         elem.clearContent();
         List<?> attributes = elem.attributes();
         for (int i = attributes.size() - 1; i >= 0; i--) {
             elem.remove((Attribute)attributes.get(i));
         }
-        return elem;
     }
 
     /**
@@ -441,8 +435,8 @@ public abstract class XmlUtilsEx {
      */
     public static void removeSubNodes(Element elem, String subNodeName){
         List<?> nodes = elem.selectNodes(subNodeName);
-        for (int i = 0; i < nodes.size(); i++) {
-            elem.remove((Node)nodes.get(i));
+        for (Object node : nodes) {
+            elem.remove((Node)node);
         }
     }
 
