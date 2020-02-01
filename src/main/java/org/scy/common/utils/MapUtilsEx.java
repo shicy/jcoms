@@ -13,6 +13,7 @@ import java.util.*;
  *
  * Created by hykj on 2017/8/15.
  */
+@SuppressWarnings("unused")
 public class MapUtilsEx {
 
     private static Logger logger = LoggerFactory.getLogger(MapUtilsEx.class.getName());
@@ -20,9 +21,6 @@ public class MapUtilsEx {
     /**
      * 获取Map中的一个编号集，如果属性不存在，则返回一个0长度数据
      * add by shicy 2011-12-16
-     * @param map
-     * @param paramName
-     * @return
      */
     public static int[] getMapIds(Map<String, Object> map, String paramName) {
         Object value = map.get(paramName);
@@ -41,7 +39,6 @@ public class MapUtilsEx {
      * 获取参数中对应的编号集
      * @param paramId 单一编号属性，优先获取
      * @param paramIds 多值编号属性
-     * @return
      */
     public static int[] getMapIntValues(Map<String, Object> map, String paramId, String paramIds) {
         int id = MapUtils.getIntValue(map, paramId, 0);
@@ -52,9 +49,6 @@ public class MapUtilsEx {
 
     /**
      * 获取Map中的一个字符串数组
-     * @param map
-     * @param paramName
-     * @return
      */
     public static String[] getMapStrings(Map<String, Object> map, String paramName) {
         Object[] value = (Object[])map.get(paramName);
@@ -69,9 +63,6 @@ public class MapUtilsEx {
 
     /**
      * 将Map转化为实体对象
-     * @param maps
-     * @param entityCls
-     * @return
      */
     public static <T> List<T> parseFromMap(List<Map<String, Object>> maps, Class<T> entityCls) {
         if (entityCls == null)
@@ -81,8 +72,8 @@ public class MapUtilsEx {
         if (maps == null || maps.size() == 0)
             return result;
 
-        for (int i = 0; i < maps.size(); i++) {
-            result.add(parseFromMap(maps.get(i), entityCls));
+        for (Map<String, Object> map: maps) {
+            result.add(parseFromMap(map, entityCls));
         }
 
         return result;
@@ -93,10 +84,9 @@ public class MapUtilsEx {
      * @param <T> 实例数据类型
      * @param map 数据映射集，从Flex客户端返回的对象以Map的形式存在
      * @param entityCls 实例类
-     * @return
      */
     public static <T> T parseFromMap(Map<String, Object> map, Class<T> entityCls) {
-        T entity = null;
+        T entity;
 
         try {
             entity = entityCls.newInstance();
@@ -105,9 +95,7 @@ public class MapUtilsEx {
             throw new RuntimeException("试解析前端对象时出错：实例化失败! " + e.getMessage(), e);
         }
 
-        Iterator<String> keys = map.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
+        for (String key: map.keySet()) {
             Object val = map.get(key);
             if (key != null && val != null)
                 setEntityValue(entity, key, val);
@@ -119,7 +107,6 @@ public class MapUtilsEx {
     /**
      * 批量对象实例化
      * @param maps 是待转换的前端对象数组，如果是List可以先用list.toArray()转换
-     * @return
      */
     public static <T> List<T> parseFromMap(Map<String, Object>[] maps, Class<T> entityCls) {
         if (entityCls == null)
@@ -129,8 +116,8 @@ public class MapUtilsEx {
         if (maps == null || maps.length == 0)
             return result;
 
-        for (int i = 0; i < maps.length; i++) {
-            result.add(parseFromMap(maps[i], entityCls));
+        for (Map<String, Object> map : maps) {
+            result.add(parseFromMap(map, entityCls));
         }
 
         return result;
@@ -221,15 +208,13 @@ public class MapUtilsEx {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static void setEntityCollectionValue(Object entity, String key, Object[] vals, Class<?> type)throws Exception {
-        List list = null;
+        List list;
         if (type == List.class)
             list = new ArrayList();
         else
             list = (List)type.newInstance();
 
-        for (int i = 0; i < vals.length; i++) {
-            list.add(vals[i]);
-        }
+        list.addAll(Arrays.asList(vals));
 
         PropertyUtils.setProperty(entity, key, list);
     }
@@ -239,15 +224,13 @@ public class MapUtilsEx {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static void setEntityMapValue(Object entity, String key, Map<String, Object> val, Class<?> type)throws Exception {
-        Map map = null;
+        Map map;
         if (type == Map.class)
             map = new HashMap();
         else
             map = (Map)type.newInstance();
 
-        Iterator<String> keys = val.keySet().iterator();
-        while (keys.hasNext()) {
-            String key1 = keys.next();
+        for (String key1: val.keySet()) {
             map.put(key1, val.get(key1));
         }
 
@@ -271,7 +254,6 @@ public class MapUtilsEx {
      * @param results 查询结果集
      * @param paramNames 转换成Map的属性名，按结果集顺序指定名称
      * @param indexs 对象索引
-     * @return
      */
     public static Map<String, Object> transToMap(Object[] results, String[] paramNames, int[] indexs) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -292,7 +274,6 @@ public class MapUtilsEx {
      * @param resultList 查询结果集
      * @param paramNames 转换成Map的属性名，按结果集顺序指定名称
      * @param indexs 对象索引
-     * @return
      */
     public static List<Map<String, Object>> transToMap(List<Object[]> resultList, String[] paramNames, int[] indexs) {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
