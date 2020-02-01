@@ -1,6 +1,8 @@
 package org.scy.common.web.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.ds.PageInfo;
@@ -166,8 +168,17 @@ public class HttpResult {
     public <T> T[] getDatas(Class<T> entityCls) {
         if (data != null) {
             try {
-                List<T> list = (List<T>)data;
-                return list.toArray((T[])Array.newInstance(entityCls, 0));
+                List<T> results = null;
+                if (data instanceof JSONArray) {
+                    JSONArray jsonArray = (JSONArray)data;
+                    results = JSONObject.parseArray(jsonArray.toJSONString(), entityCls);
+                }
+                else if (data instanceof List) {
+                    results = (List<T>)data;
+                }
+                if (results != null) {
+                    return results.toArray((T[])Array.newInstance(entityCls, 0));
+                }
             }
             catch (Exception e) {
                 // .
