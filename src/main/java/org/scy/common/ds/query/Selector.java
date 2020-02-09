@@ -102,14 +102,14 @@ public class Selector {
     public String getWhere() {
         String where = getWhereMore();
         if (StringUtils.isNotBlank(where))
-            return "where " + where.substring(4);
+            return "where " + where.substring(5);
         return "";
     }
 
     public String getWhereMore() {
         StringBuilder builder = new StringBuilder();
         for (Filter filter: filters) {
-            builder.append("and ").append(filter.toString());
+            builder.append(" and ").append(filter.toString());
         }
         return builder.toString();
     }
