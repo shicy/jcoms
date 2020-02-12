@@ -61,7 +61,7 @@ public final class SessionManager {
         String appSecret = appConfigs.getAppSecret();
         if (StringUtils.isNotBlank(appId) && StringUtils.isNotBlank(appSecret)) {
             long time = new Date().getTime();
-            if (myAccessToken != null && time - myAccessTokenTime < 15 * 60 * 1000)
+            if (myAccessToken != null && time - myAccessTokenTime < 10 * 60 * 1000)
                 return myAccessToken;
 
             myAccessToken = null;
