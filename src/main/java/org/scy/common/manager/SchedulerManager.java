@@ -13,6 +13,7 @@ import java.util.Map;
  * 定时器管理类
  * Created by shicy on 2017/9/16
  */
+@SuppressWarnings("all")
 public class SchedulerManager {
 
     private Logger logger = LoggerFactory.getLogger(SchedulerManager.class);
@@ -154,9 +155,8 @@ public class SchedulerManager {
         /**
          * 任务开始执行
          * @param jobExecutionContext 上下文
-         * @throws JobExecutionException 执行异常
          */
-        public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        public void execute(JobExecutionContext jobExecutionContext) {
             this.context = jobExecutionContext;
             if (!this.isRunning()) {
                 currentThread = new Thread(this);
