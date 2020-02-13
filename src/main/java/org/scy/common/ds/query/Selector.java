@@ -14,7 +14,7 @@ import java.util.List;
 public class Selector {
 
     private PageInfo pageInfo;
-    private List<Filter> filters = new ArrayList<Filter>();
+    private List<FilterGroup> filterGroups = new ArrayList<FilterGroup>();
     private List<Order> orders = new ArrayList<Order>();
     private List<String> groups = new ArrayList<String>();
 
@@ -30,17 +30,17 @@ public class Selector {
 
     public void addFilter(Filter filter) {
         if (filter != null)
-            this.filters.add(filter);
+            this.filterGroups.add(new FilterGroup(filter));
     }
 
     public void addFilter(String field, Object value) {
         if (StringUtils.isNotBlank(field))
-            this.filters.add(new Filter(field, value));
+            this.filterGroups.add(new FilterGroup(new Filter(field, value)));
     }
 
     public void addFilter(String field, Object value, Oper oper) {
         if (StringUtils.isNotBlank(field))
-            this.filters.add(new Filter(field, value, oper));
+            this.filterGroups.add(new FilterGroup(new Filter(field, value, oper)));
     }
 
     public void addFilterNotNull(String field, Object value) {
@@ -79,6 +79,14 @@ public class Selector {
         }
     }
 
+    public void addFilter(Filter[] filters, Logic logic) {
+        this.filterGroups.add(new FilterGroup(filters, logic));
+    }
+
+    public void addFilter(FilterGroup filterGroup) {
+        this.filterGroups.add(filterGroup);
+    }
+
     public void addOrder(Order order) {
         if (order != null)
             this.orders.add(order);
@@ -108,8 +116,10 @@ public class Selector {
 
     public String getWhereMore() {
         StringBuilder builder = new StringBuilder();
-        for (Filter filter: filters) {
-            builder.append(" and ").append(filter.toString());
+        for (FilterGroup filterGroup: filterGroups) {
+            String sql = filterGroup != null ? filterGroup.toString() : null;
+            if (sql != null && sql.length() > 0)
+                builder.append(" and ").append(sql);
         }
         return builder.toString();
     }
