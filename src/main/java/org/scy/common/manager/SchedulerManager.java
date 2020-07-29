@@ -13,10 +13,10 @@ import java.util.Map;
  * 定时器管理类
  * Created by shicy on 2017/9/16
  */
-@SuppressWarnings("all")
+@SuppressWarnings("unused")
 public class SchedulerManager {
 
-    private Logger logger = LoggerFactory.getLogger(SchedulerManager.class);
+    private final Logger logger = LoggerFactory.getLogger(SchedulerManager.class);
 
     private Scheduler scheduler;
     private static SchedulerManager schedulerManager;
@@ -65,7 +65,7 @@ public class SchedulerManager {
      * @return Cron 类型触发器
      */
     public static Trigger newCronTrigger(String cronExpression, boolean startNow) {
-        TriggerBuilder triggerBuilder = TriggerBuilder.newTrigger();
+        TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
         triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression));
         if (startNow)
             triggerBuilder.startNow();
@@ -144,7 +144,7 @@ public class SchedulerManager {
      */
     public abstract static class ThreadJob extends MyJob implements Runnable {
 
-        private Logger logger = LoggerFactory.getLogger(ThreadJob.class);
+        private final Logger logger = LoggerFactory.getLogger(ThreadJob.class);
 
         // 执行任务时的上下文对象
         protected JobExecutionContext context;
