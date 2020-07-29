@@ -72,6 +72,7 @@
     <logger name="org.quartz" level="error"/>
     <logger name="org.mybatis.spring" level="info"/>
     <logger name="com.netflix.hystrix" level="info"/>
+    <logger name="springfox.documentation" level="error"/>
 
     <logger name="org.scy.common.ds.DbUpgrade" level="debug" additivity="false">
         <appender-ref ref="stdout" />
