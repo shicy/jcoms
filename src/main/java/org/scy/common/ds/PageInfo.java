@@ -50,7 +50,9 @@ public class PageInfo implements Serializable {
     public static PageInfo create(HttpServletRequest request) {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPage(HttpUtilsEx.getIntValue(request, "page", 1));
-        pageInfo.setSize(HttpUtilsEx.getIntValue(request, "limit", defaultSize));
+        pageInfo.setSize(HttpUtilsEx.getIntValue(request, "size", 0));
+        if (pageInfo.getSize() <= 0)
+            pageInfo.setSize(HttpUtilsEx.getIntValue(request, "limit", defaultSize));
         return pageInfo;
     }
 
@@ -71,7 +73,7 @@ public class PageInfo implements Serializable {
     }
 
     public int getTotal() {
-        return total > 0 ? total : 0;
+        return Math.max(total, 0);
     }
 
     public void setTotal(int total) {
@@ -93,6 +95,11 @@ public class PageInfo implements Serializable {
     @JSONField(serialize = false)
     public int getPageStart() {
         return (this.getPage() - 1) * this.getSize();
+    }
+
+    @JSONField(serialize = false)
+    public int getPageEnd() {
+        return this.getPage() * this.getSize();
     }
 
 }
