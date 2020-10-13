@@ -21,7 +21,6 @@ import java.util.Date;
  * Created by shicy on 2017/9/3
  */
 @Component
-@SuppressWarnings("unused")
 public final class SessionManager {
 
     public final static String TOKEN_KEY = "token";
@@ -35,7 +34,7 @@ public final class SessionManager {
     private final static ThreadLocal<Account> accountInfo = new ThreadLocal<Account>();
     private final static ThreadLocal<User> userInfo = new ThreadLocal<User>();
 
-    private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
+    private final static Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
     private static SessionClient sessionClient;
 
