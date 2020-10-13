@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -13,7 +14,6 @@ import java.net.URLEncoder;
  * Http 相关工具类
  * Created by hykj on 2017/8/16.
  */
-@SuppressWarnings("unused")
 public abstract class HttpUtilsEx {
 
     /**
@@ -246,6 +246,35 @@ public abstract class HttpUtilsEx {
             return ip;
 
         return request.getRemoteAddr();
+    }
+
+    /**
+     * 添加或删除Cookie信息，有效期1天
+     * @param response Http响应对象
+     * @param key 键名称
+     * @param value 值为null时删除该Cookie
+     */
+    public static void setCookie(HttpServletResponse response, String key, String value) {
+        setCookie(response, key, value, 24 * 60 * 60);
+    }
+
+    /**
+     * 添加或删除Cookie信息
+     * @param response Http响应对象
+     * @param key 键名称
+     * @param value 值为null时删除该Cookie
+     * @param expires 过期时间（秒），小于零时无限期
+     */
+    public static void setCookie(HttpServletResponse response, String key, String value, int expires) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setPath("/");
+        if (value == null)
+            cookie.setMaxAge(-1); // 将删除Cookie
+        else if (expires > 0)
+            cookie.setMaxAge(expires);
+        else
+            cookie.setMaxAge(Integer.MAX_VALUE);
+        response.addCookie(cookie);
     }
 
 }
