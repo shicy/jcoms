@@ -7,8 +7,11 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.security.MD5Encoder;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -19,10 +22,9 @@ import java.util.regex.Pattern;
  * 字符串处理公共方法，是{@link org.apache.commons.lang3.StringUtils}的扩展
  * Created by hykj on 2017/8/15.
  */
-@SuppressWarnings("unused")
 public abstract class StringUtilsEx {
 
-    private static char[] chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+    private static final char[] chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     /**
      * 过滤文本内容，去除标点符号以及多余空格
@@ -109,9 +111,9 @@ public abstract class StringUtilsEx {
         String strTmp = StringUtils.substringAfter(strURL, "?");
         String[] params = StringUtils.split(strTmp, "&");
         Map<String, String> map = new HashMap<String, String>();
-        for (int i = 0; i < params.length; i++) {
-            String name = StringUtils.substringBefore(params[i], "=");
-            String value = StringUtils.substringAfter(params[i], "=");
+        for (String param: params) {
+            String name = StringUtils.substringBefore(param, "=");
+            String value = StringUtils.substringAfter(param, "=");
             map.put(name, value);
         }
         return map;
@@ -163,7 +165,7 @@ public abstract class StringUtilsEx {
     }
 
     /** 定义汉语拼音转换的输出格式 */
-    private static HanyuPinyinOutputFormat hypyFormat = new HanyuPinyinOutputFormat();
+    private static final HanyuPinyinOutputFormat hypyFormat = new HanyuPinyinOutputFormat();
 
     static {
         // 汉语发音中的 ü 用 v 代表
@@ -183,22 +185,39 @@ public abstract class StringUtilsEx {
     public static String toHanYuPinYin(String chs, boolean headOnly) {
         // 转化为字符数组
         char[] chars = chs.toCharArray();
-        String pyStr = "";
+        StringBuilder pyStr = new StringBuilder();
         try {
-            for (int i = 0; i < chars.length; i++){
-                String[] py = PinyinHelper.toHanyuPinyinStringArray(chars[i], hypyFormat);
+            for (char c: chars) {
+                String[] py = PinyinHelper.toHanyuPinyinStringArray(c, hypyFormat);
                 if (py == null) // 当转换不是中文字符时，返回null
-                    pyStr += chars[i];
+                    pyStr.append(c);
                 else if (headOnly)
-                    pyStr += py[0].charAt(0);
+                    pyStr.append(py[0].charAt(0));
                 else
-                    pyStr += py[0];
+                    pyStr.append(py[0]);
             }
         }
         catch (Exception e) {
             return null;
         }
-        return pyStr;
+        return pyStr.toString();
+    }
+
+    /**
+     * 获取字符串 MD5 编码
+     * @param value 原字符串
+     * @return MD5编码
+     */
+    public static String toMD5(String value) {
+        if (StringUtils.isEmpty(value))
+            return "";
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            return MD5Encoder.encode(md.digest(value.getBytes()));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 
 }
