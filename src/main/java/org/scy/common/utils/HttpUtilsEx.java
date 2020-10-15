@@ -219,6 +219,30 @@ public abstract class HttpUtilsEx {
     }
 
     /**
+     * 获取一个 Bool 数值，默认false
+     * @param req Http请求对象
+     * @param key 参数名称
+     * @return 参数值
+     */
+    public static boolean getBooleanValue(HttpServletRequest req, String key) {
+        return getBooleanValue(req, key, false);
+    }
+
+    /**
+     * 获取一个 Bool 数值
+     * @param req Http请求对象
+     * @param key 参数名称
+     * @param defaultVal 默认值
+     * @return 参数值
+     */
+    public static boolean getBooleanValue(HttpServletRequest req, String key, boolean defaultVal) {
+        String val = req.getParameter(key);
+        if (StringUtils.isBlank(val))
+            return defaultVal;
+        return "true".equalsIgnoreCase(val);
+    }
+
+    /**
      * 获取多值参数
      * @param req Http请求对象
      * @param key 参数名
