@@ -9,16 +9,12 @@ import org.scy.common.ds.PageInfo;
 import org.scy.common.utils.MapUtilsEx;
 
 import java.lang.reflect.Array;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * HTTP请求结果对象
  * Created by shicy on 2017/9/2
  */
-@SuppressWarnings({"unused", "unchecked"})
 public class HttpResult {
 
     // 成功
@@ -207,9 +203,14 @@ public class HttpResult {
         }
 
         if (resource != null) {
-            String value = resource.getString("" + code);
-            if (StringUtils.isNotBlank(value))
-                return value;
+            try {
+                String value = resource.getString("" + code);
+                if (StringUtils.isNotBlank(value))
+                    return value;
+            }
+            catch (MissingResourceException e) {
+                // .
+            }
         }
 
         return defVal;
