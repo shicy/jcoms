@@ -253,9 +253,18 @@ public final class SessionManager {
     public static Account getAccount() {
         Account account = accountInfo.get();
         if (account == null) {
+            HttpResult result = null;
             String _token = accessToken.get();
             if (StringUtils.isNotBlank(_token)) {
-                HttpResult result = sessionClient.getAccount(_token);
+                result = sessionClient.getAccount(_token);
+            }
+            else {
+                _token = token.get();
+                if (StringUtils.startsWith(_token, "A-")) {
+                    result = sessionClient.getAccount(_token);
+                }
+            }
+            if (result != null) {
                 if (result.getCode() == HttpResult.OK) {
                     account = result.getData(Account.class);
                 }
