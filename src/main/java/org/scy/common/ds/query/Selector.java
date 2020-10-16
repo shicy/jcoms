@@ -10,13 +10,12 @@ import java.util.List;
  * 查询器
  * Created by shicy on 2017/10/9.
  */
-@SuppressWarnings("unused")
 public class Selector {
 
     private PageInfo pageInfo;
-    private List<FilterGroup> filterGroups = new ArrayList<FilterGroup>();
-    private List<Order> orders = new ArrayList<Order>();
-    private List<String> groups = new ArrayList<String>();
+    private final List<FilterGroup> filterGroups = new ArrayList<FilterGroup>();
+    private final List<Order> orders = new ArrayList<Order>();
+    private final List<String> groups = new ArrayList<String>();
 
     public static Selector build(PageInfo pageInfo) {
         Selector selector = new Selector();
