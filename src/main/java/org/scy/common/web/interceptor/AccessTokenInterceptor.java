@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
  * AccessToken 拦截器
  * Created by shicy on 2017/9/26.
  */
-@SuppressWarnings("unused")
 public class AccessTokenInterceptor extends HandlerInterceptorAdapter {
 
     // 系统配置信息
