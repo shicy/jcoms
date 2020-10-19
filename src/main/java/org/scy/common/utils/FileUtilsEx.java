@@ -161,10 +161,16 @@ public abstract class FileUtilsEx {
      * @param deep 是否获取子目录
      */
     private static URL[] getJarResources(URL resource, String ext, boolean deep) {
+//        getJarResources:
+//        file:/mnt/app/app.jar!/BOOT-INF/classes!/org/scy/priv/scripts
+//        -BOOT-INF/classes!/org/scy/priv/scripts
+//        -/mnt/app/app.jar
         String resourcePath = resource.getFile();
         String resourceName = StringUtils.substringAfter(resourcePath, "!/");
-        String jarFileName = StringUtils.substringBetween(resource.getFile(), "file:", "!/");
-        logger.warn(">>>> getJarResources:" + resourcePath + "-" + resourceName + "-" + jarFileName);
+        String jarFileName = StringUtils.substringBetween(resourcePath, "file:", "!/");
+        logger.warn(">>>> getJarResources:" + resourcePath);
+        logger.warn(">>>> getJarResources:" + resourceName);
+        logger.warn(">>>> getJarResources:" + jarFileName);
 
         List<URL> results = new ArrayList<URL>();
         try {
@@ -172,9 +178,10 @@ public abstract class FileUtilsEx {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
-                logger.warn(">>>> getJarResources:" + jarEntry);
+                logger.warn(">>>> jarEntry:" + jarEntry + ";" + jarEntry.isDirectory());
                 if (!jarEntry.isDirectory()) {
                     String fileName = jarEntry.getName();
+                    logger.warn(">>>> jarEntryName:" + fileName);
 
                     if (ext != null) {
                         String extName = getFileExtension(fileName);
