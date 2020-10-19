@@ -34,7 +34,7 @@ public abstract class FileUtilsEx {
         if (source == null || dest == null)
             return ;
 
-        if (source.exists() == false)
+        if (!source.exists())
             return ;
 
         InputStream input = null;
@@ -59,12 +59,12 @@ public abstract class FileUtilsEx {
      */
     public static void deleteFiles(String[] fileNames) {
         if (fileNames != null) {
-            File file = null;
+            File file;
             for (String fileName: fileNames) {
                 if (StringUtils.isNotBlank(fileName)) {
                     file = new File(fileName);
                     if (file.exists()) {
-                        if (file.delete() == false)
+                        if (!file.delete())
                             file.deleteOnExit();
                     }
                 }
@@ -79,7 +79,8 @@ public abstract class FileUtilsEx {
      */
     public static URL getResource(String resourceName) {
         if (StringUtils.isNotBlank(resourceName)) {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            // ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            ClassLoader loader = FileUtilsEx.class.getClassLoader();
             return loader.getResource(resourceName);
         }
         return null;
@@ -158,7 +159,6 @@ public abstract class FileUtilsEx {
      * @param resource 资源根目录信息
      * @param ext 筛选文件后缀名称（不含“.”）
      * @param deep 是否获取子目录
-     * @return
      */
     private static URL[] getJarResources(URL resource, String ext, boolean deep) {
         String resourcePath = resource.getFile();
@@ -359,8 +359,6 @@ public abstract class FileUtilsEx {
 
     /**
      * 获取文件后缀名
-     * @param fileName
-     * @return
      */
     public static String getFileExtension(String fileName) {
         if (StringUtils.isBlank(fileName))
@@ -439,9 +437,8 @@ public abstract class FileUtilsEx {
      * 	<li>makeDirectory("d:/a/b/c"), 创建D盘a/b/c目录
      * 	<li>makeDirectory("d:/a/b/c.txt"), 创建D盘a/b目录
      * </ul>
-     * @param fileName
      */
-    public final static void makeDirectory(String fileName) {
+    public static void makeDirectory(String fileName) {
         File file = new File(fileName);
         fileName = file.getAbsolutePath();
         fileName = StringUtils.substringAfterLast(fileName, File.separator);
@@ -540,21 +537,15 @@ public abstract class FileUtilsEx {
 
     /**
      * 将字节码写入文件 add by shicy 2013-1-26
-     * @param fileName
-     * @param datas
-     * @throws IOException
      */
-    public final static void write(String fileName, byte[] datas) throws IOException {
+    public static void write(String fileName, byte[] datas) throws IOException {
         write(new File(fileName), datas);
     }
 
     /**
      * 将字节码写入文件
-     * @param file
-     * @param datas
-     * @throws IOException
      */
-    public final static void write(File file, byte[] datas) throws IOException {
+    public static void write(File file, byte[] datas) throws IOException {
         OutputStream output = null;
         try {
             makeDirectory(file.getAbsolutePath());
@@ -569,11 +560,8 @@ public abstract class FileUtilsEx {
 
     /**
      * 将一组文件压缩到一个目录文件中
-     * @param srcFiles
-     * @param destFile
-     * @throws IOException
      */
-    public final static void zipFiles(File[] srcFiles, File destFile) throws IOException {
+    public static void zipFiles(File[] srcFiles, File destFile) throws IOException {
         ZipOutputStream zout = null; // 这里，JDK自带的压缩存在中文文件名乱码问题
         try {
             // 创建目标文件的压缩流
