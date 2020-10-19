@@ -24,15 +24,13 @@ import java.util.zip.ZipOutputStream;
  */
 public abstract class FileUtilsEx {
 
-    private static Logger logger = LoggerFactory.getLogger(FileUtilsEx.class);
+    private final static Logger logger = LoggerFactory.getLogger(FileUtilsEx.class);
 
     /**
      * 复制单个文件 modify by shicy 2013-1-26
-     * @param source
-     * @param dest
      */
 
-    public final static void copyFile(File source, File dest) {
+    public static void copyFile(File source, File dest) {
         if (source == null || dest == null)
             return ;
 
@@ -58,7 +56,6 @@ public abstract class FileUtilsEx {
 
     /**
      * 删除本地文件
-     * @param fileNames
      */
     public static void deleteFiles(String[] fileNames) {
         if (fileNames != null) {
@@ -144,6 +141,7 @@ public abstract class FileUtilsEx {
      */
     public static URL[] getResources(String resourceDir, String ext, boolean deep) {
         URL resource = getResource(resourceDir);
+        logger.warn(">>>> getResources(" + resourceDir + "): " + resource);
         if (resource != null) {
             if (isJarURL(resource)) {
                 return getJarResources(resource, ext, deep);

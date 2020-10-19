@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class DbUpgrade /*extends Thread*/ {
 
-    private Logger logger = LoggerFactory.getLogger(DbUpgrade.class);
+    private final Logger logger = LoggerFactory.getLogger(DbUpgrade.class);
 
     private final static String versionTableName = "db_version";
 
@@ -188,9 +188,11 @@ public class DbUpgrade /*extends Thread*/ {
 
         if (resourceFilePath != null) {
             URL[] resources = FileUtilsEx.getResources(resourceFilePath, "sql", true);
+            logger.warn(">>>> getScriptResources: " + resources.length);
             for (URL resource: resources) {
-                scripts.add(resource);
+                logger.warn(">>>> getScriptResources: " + resource);
             }
+            Collections.addAll(scripts, resources);
         }
 
         sortScripts(scripts);
