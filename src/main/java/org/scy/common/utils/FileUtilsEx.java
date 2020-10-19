@@ -164,6 +164,7 @@ public abstract class FileUtilsEx {
         String resourcePath = resource.getFile();
         String resourceName = StringUtils.substringAfter(resourcePath, "!/");
         String jarFileName = StringUtils.substringBetween(resource.getFile(), "file:", "!/");
+        logger.warn(">>>> getJarResources:" + resourcePath + "-" + resourceName + "-" + jarFileName);
 
         List<URL> results = new ArrayList<URL>();
         try {
@@ -171,6 +172,7 @@ public abstract class FileUtilsEx {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
+                logger.warn(">>>> getJarResources:" + jarEntry);
                 if (!jarEntry.isDirectory()) {
                     String fileName = jarEntry.getName();
 
