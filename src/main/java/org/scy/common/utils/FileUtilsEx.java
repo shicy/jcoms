@@ -160,9 +160,13 @@ public abstract class FileUtilsEx {
      * @param deep 是否获取子目录
      */
     private static URL[] getJarResources(URL resource, String ext, boolean deep) {
-        String resourcePath = resource.getFile();
-        String resourceName = StringUtils.substringAfter(resourcePath, "!/");
-        String jarFileName = StringUtils.substringBetween(resourcePath, "file:", "!/");
+//        file:/mnt/app/app.jar!/BOOT-INF/classes!/org/scy/priv/scripts;sql
+        String resourcePath = StringUtils.substringAfter(resource.getFile(), "file:");
+        String[] temp = resourcePath.split("!");
+        String jarFileName = temp[0];
+        String resourceName = temp[1] + temp[2];
+//        String resourceName = StringUtils.substringAfter(resourcePath, "!/");
+//        String jarFileName = StringUtils.substringBetween(resourcePath, "file:", "!/");
         logger.warn(">>>> getJarResources:" + resourcePath + ";" + ext);
         logger.warn(">>>> getJarResources:" + resourceName);
         logger.warn(">>>> getJarResources:" + jarFileName);
@@ -175,7 +179,7 @@ public abstract class FileUtilsEx {
                 JarEntry jarEntry = entries.nextElement();
 //                logger.warn(">>>> jarEntry:" + jarEntry + ";" + jarEntry.isDirectory());
                 if (!jarEntry.isDirectory()) {
-                    String fileName = jarEntry.getName();
+                    String fileName = "/" + jarEntry.getName();
 //                    logger.warn(">>>> jarEntryName:" + fileName);
 
                     if (ext != null) {
