@@ -79,8 +79,7 @@ public abstract class FileUtilsEx {
      */
     public static URL getResource(String resourceName) {
         if (StringUtils.isNotBlank(resourceName)) {
-            // ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            ClassLoader loader = FileUtilsEx.class.getClassLoader();
+             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             return loader.getResource(resourceName);
         }
         return null;
@@ -161,14 +160,10 @@ public abstract class FileUtilsEx {
      * @param deep 是否获取子目录
      */
     private static URL[] getJarResources(URL resource, String ext, boolean deep) {
-//        getJarResources:
-//        file:/mnt/app/app.jar!/BOOT-INF/classes!/org/scy/priv/scripts
-//        -BOOT-INF/classes!/org/scy/priv/scripts
-//        -/mnt/app/app.jar
         String resourcePath = resource.getFile();
         String resourceName = StringUtils.substringAfter(resourcePath, "!/");
         String jarFileName = StringUtils.substringBetween(resourcePath, "file:", "!/");
-        logger.warn(">>>> getJarResources:" + resourcePath);
+        logger.warn(">>>> getJarResources:" + resourcePath + ";" + ext);
         logger.warn(">>>> getJarResources:" + resourceName);
         logger.warn(">>>> getJarResources:" + jarFileName);
 
@@ -178,16 +173,17 @@ public abstract class FileUtilsEx {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
-                logger.warn(">>>> jarEntry:" + jarEntry + ";" + jarEntry.isDirectory());
+//                logger.warn(">>>> jarEntry:" + jarEntry + ";" + jarEntry.isDirectory());
                 if (!jarEntry.isDirectory()) {
                     String fileName = jarEntry.getName();
-                    logger.warn(">>>> jarEntryName:" + fileName);
+//                    logger.warn(">>>> jarEntryName:" + fileName);
 
                     if (ext != null) {
                         String extName = getFileExtension(fileName);
                         if ((ext.length() == 0 && extName != null) || !ext.equals(extName))
                             continue;
                     }
+                    logger.warn(">>>> jarEntryName:" + fileName);
 
                     if (fileName.equals(resourceName)) {
                         results.add(resource);
