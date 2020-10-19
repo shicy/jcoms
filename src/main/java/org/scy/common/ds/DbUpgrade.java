@@ -33,7 +33,7 @@ public class DbUpgrade /*extends Thread*/ {
     private final static String versionTableName = "db_version";
 
     // 数据库操作
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     // 脚本所在资源文件目录
     private String resourceFilePath;
     // 脚本文件集，与 resourceFilePath 是2种不同的处理方案
@@ -44,7 +44,7 @@ public class DbUpgrade /*extends Thread*/ {
 
     private String currentLine = null;
     private Date currentScriptDate = null;
-    private String[] patterns = new String[]{"yyyy-M-d", "yyyy-MM-dd",
+    private final String[] patterns = new String[]{"yyyy-M-d", "yyyy-MM-dd",
             "yyyy-M-d H:m:s", "yyyy-MM-dd HH:mm:ss", "yyyy-M-d HH:mm:ss"};
 
     /**
@@ -172,10 +172,9 @@ public class DbUpgrade /*extends Thread*/ {
     /**
      * 判断数据库中是否存在某个表
      * @param tableName 数据库表名称
-     * @return
      */
     private boolean isTableExists(String tableName) {
-        List tables = jdbcTemplate.queryForList("show tables like '" + tableName + "';");
+        List<?> tables = jdbcTemplate.queryForList("show tables like '" + tableName + "';");
         return tables != null && tables.size() > 0;
     }
 
@@ -188,10 +187,6 @@ public class DbUpgrade /*extends Thread*/ {
 
         if (resourceFilePath != null) {
             URL[] resources = FileUtilsEx.getResources(resourceFilePath, "sql", true);
-            logger.warn(">>>> getScriptResources: " + resources.length);
-            for (URL resource: resources) {
-                logger.warn(">>>> getScriptResources: " + resource);
-            }
             Collections.addAll(scripts, resources);
         }
 
@@ -263,7 +258,6 @@ public class DbUpgrade /*extends Thread*/ {
     /**
      * 获取当前数据库脚本相应更新时间
      * @param scriptFileName 脚本文件名称
-     * @return
      */
     private Date getLastVersionDate(String scriptFileName) {
         StringBuilder query = new StringBuilder();
@@ -305,7 +299,6 @@ public class DbUpgrade /*extends Thread*/ {
      * @param scriptFile 当前需要执行的脚本文件
      * @param scriptDate 当前脚本的最后更新时间（上一次更新时间）
      * @return 返回当前脚本的最后更新时间
-     * @throws Exception
      */
     private Date executeScriptFile(URL scriptFile, Date scriptDate) throws Exception {
         BufferedReader reader = null;
@@ -345,9 +338,6 @@ public class DbUpgrade /*extends Thread*/ {
     /**
      * 读取文件直到脚本的时间大小date，这样可以过滤那些已经更新的脚本，保证本次更新的是最新脚本。
      * 脚本更新时间必需在注释行，以“--”开头，时间以“<>”包围
-     * @param reader
-     * @param date
-     * @throws IOException
      */
     private void readAfterDate(BufferedReader reader, Date date) throws IOException {
         while (this.readLine(reader)) {
@@ -359,9 +349,6 @@ public class DbUpgrade /*extends Thread*/ {
     /**
      * 获取脚本文件的下一条执行语句，如果读取到空行或者“GO”行或者以分号(;)结尾的行，
      * 则认为是一条SQL语句的结束
-     * @param reader
-     * @return
-     * @throws IOException
      */
     private String readNextStatement(BufferedReader reader) throws IOException {
         StringBuilder query = new StringBuilder();
@@ -390,9 +377,7 @@ public class DbUpgrade /*extends Thread*/ {
 
     /**
      * 读取文件一行内容，如果读到有标记脚本时间的注释行，则更新脚本时间值
-     * @param reader
      * @return 返回是否成功读取行，往往读到文件尾时返回false
-     * @throws IOException
      */
     private boolean readLine(BufferedReader reader) throws IOException {
         currentLine = reader.readLine();
