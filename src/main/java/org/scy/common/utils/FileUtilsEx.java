@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -55,19 +56,25 @@ public abstract class FileUtilsEx {
     }
 
     /**
+     * 删除文件
+     */
+    public static void deleteFile(String fileName) {
+        if (StringUtils.isNotBlank(fileName)) {
+            File file = new File(fileName);
+            if (file.exists()) {
+                if (!file.delete())
+                    file.deleteOnExit();
+            }
+        }
+    }
+
+    /**
      * 删除本地文件
      */
     public static void deleteFiles(String[] fileNames) {
         if (fileNames != null) {
-            File file;
             for (String fileName: fileNames) {
-                if (StringUtils.isNotBlank(fileName)) {
-                    file = new File(fileName);
-                    if (file.exists()) {
-                        if (!file.delete())
-                            file.deleteOnExit();
-                    }
-                }
+                deleteFile(fileName);
             }
         }
     }
@@ -438,14 +445,15 @@ public abstract class FileUtilsEx {
      * 	<li>makeDirectory("d:/a/b/c.txt"), 创建D盘a/b目录
      * </ul>
      */
-    public static void makeDirectory(String fileName) {
+    public static boolean makeDirectory(String fileName) {
         File file = new File(fileName);
         fileName = file.getAbsolutePath();
         fileName = StringUtils.substringAfterLast(fileName, File.separator);
         if (fileName.indexOf('.') >= 0)
             file = file.getParentFile();
         if (!file.exists())
-            file.mkdirs();
+            return file.mkdirs();
+        return false;
     }
 
     /**
@@ -552,48 +560,102 @@ public abstract class FileUtilsEx {
             output = new BufferedOutputStream(new FileOutputStream(file));
             output.write(datas);
             output.flush();
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(output);
         }
     }
 
     /**
+     * 将Http文件流写入文件
+     */
+    public static void write(String fileName, MultipartFile file) throws IOException {
+        InputStream input = null;
+        OutputStream output = null;
+        try {
+            makeDirectory(fileName);
+            input = file.getInputStream();
+            output = new FileOutputStream(new File(fileName));
+            write(output, input);
+        } finally {
+            IOUtils.closeQuietly(input);
+            IOUtils.closeQuietly(output);
+        }
+    }
+
+    /**
+     * 文件写入输出流
+     */
+    public static void write(OutputStream output, File file) throws IOException {
+        InputStream input = null;
+        try {
+            input = new FileInputStream(file);
+            write(output, input);
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+    }
+
+    /**
+     * 文件流读写
+     */
+    public static void write(OutputStream output, InputStream input) throws IOException {
+        input = new BufferedInputStream(input);
+        output = new BufferedOutputStream(output);
+
+        byte[] buffer = new byte[2048];
+        int readBytes = 0;
+        while ((readBytes = input.read(buffer)) != -1) {
+            output.write(buffer, 0, readBytes);
+        }
+        output.flush();
+    }
+
+    /**
      * 将一组文件压缩到一个目录文件中
      */
-    public static void zipFiles(File[] srcFiles, File destFile) throws IOException {
+    public static void zipFiles(File[] srcFiles, File destFile, String[] fileNames) throws IOException {
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(destFile);
+            zipFiles(srcFiles, output, fileNames);
+        } finally {
+            IOUtils.closeQuietly(output);
+        }
+    }
+
+    public static void zipFiles(File[] srcFiles, OutputStream output, String[] fileNames) throws IOException {
         ZipOutputStream zout = null; // 这里，JDK自带的压缩存在中文文件名乱码问题
         try {
-            // 创建目标文件的压缩流
-            zout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destFile)));
-            // 设置压缩算法
-            zout.setMethod(ZipOutputStream.DEFLATED);
-            int bufSize = 1024 * 4;
-            byte[] buf = new byte[bufSize];
-            for (int i = 0; i < srcFiles.length; i++){
-                if (!srcFiles[i].exists())
+            zout = new ZipOutputStream(output);
+            zout.setMethod(ZipOutputStream.DEFLATED); // 压缩算法
+
+            byte[] buffer = new byte[2018];
+            int readBytes = 0;
+            for (int i = 0; i < srcFiles.length; i++) {
+                File srcFile = srcFiles[i];
+                if (!srcFile.exists())
                     continue;
-                BufferedInputStream bin = null;
+
+                String fileName = srcFile.getName();
+                if (fileNames != null && i < fileNames.length && StringUtils.isNotBlank(fileNames[i]))
+                    fileName = fileNames[i];
+                ZipEntry zipEntry = new ZipEntry(fileName);
+                zout.putNextEntry(zipEntry);
+
+                InputStream input = null;
                 try {
-                    // 创建文件输入流
-                    bin = new BufferedInputStream(new FileInputStream(srcFiles[i]));
-                    // 为读出的数据创建一个ZIP条目列表
-                    ZipEntry entry = new ZipEntry(srcFiles[i].getName());
-                    zout.putNextEntry(entry);
-                    int len = -1;
-                    while ((len = bin.read(buf, 0, bufSize)) != -1){
-                        zout.write(buf, 0, len);
+                    input = new BufferedInputStream(new FileInputStream(srcFile));
+                    while ((readBytes = input.read(buffer)) != -1) {
+                        zout.write(buffer, 0, readBytes);
                     }
-                }
-                finally {
-                    if (bin != null)
-                        bin.close();
+                } finally {
+                    IOUtils.closeQuietly(input);
                 }
             }
-        }
-        finally {
-            if (zout != null)
-                zout.close();
+            output.flush();
+            zout.finish();
+        } finally {
+            IOUtils.closeQuietly(zout);
         }
     }
 

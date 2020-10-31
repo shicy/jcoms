@@ -28,7 +28,7 @@ public abstract class HttpUtilsEx {
             fileName = file.getName();
 
         //rep.reset();
-        rep.setContentType("application/x-msdownload");
+        rep.setContentType("application/octet-stream;charset=utf-8");
         fileName = URLEncoder.encode(fileName, "UTF-8");
         rep.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
         rep.setContentLength((int)file.length());
@@ -299,6 +299,26 @@ public abstract class HttpUtilsEx {
         else
             cookie.setMaxAge(Integer.MAX_VALUE);
         response.addCookie(cookie);
+    }
+
+    /**
+     * 文件名称编码，防止中文乱码
+     */
+    public static String encodeFileName(HttpServletRequest request, String fileName) {
+        String userAgent = request.getHeader("User-Agent");
+        try {
+            if (userAgent.contains("MSIE") || userAgent.contains("Trident")) {
+                // IE浏览器
+                fileName = URLEncoder.encode(fileName, "UTF-8");
+            }
+            else {
+                // 非IE浏览器
+                fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return fileName;
     }
 
 }
