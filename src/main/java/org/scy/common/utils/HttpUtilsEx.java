@@ -2,13 +2,18 @@ package org.scy.common.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.dom4j.Document;
+import org.scy.common.web.model.RequestModel;
+import org.scy.common.web.model.ResponseModel;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.Map;
 
 /**
  * Http 相关工具类
@@ -319,6 +324,17 @@ public abstract class HttpUtilsEx {
             e.printStackTrace();
         }
         return fileName;
+    }
+
+    public static ResponseModel doGet(String url, Map<String, String> params) {
+        RequestModel model = new RequestModel(url);
+        model.setParams(params);
+        return doGet(model);
+    }
+
+    public static ResponseModel doGet(RequestModel model) {
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        return null;
     }
 
 }
