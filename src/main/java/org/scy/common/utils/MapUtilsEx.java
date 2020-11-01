@@ -13,10 +13,9 @@ import java.util.*;
  *
  * Created by hykj on 2017/8/15.
  */
-@SuppressWarnings("unused")
-public class MapUtilsEx {
+public abstract class MapUtilsEx {
 
-    private static Logger logger = LoggerFactory.getLogger(MapUtilsEx.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(MapUtilsEx.class.getName());
 
     /**
      * 获取Map中的一个编号集，如果属性不存在，则返回一个0长度数据
