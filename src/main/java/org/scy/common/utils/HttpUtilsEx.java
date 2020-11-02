@@ -2,6 +2,9 @@ package org.scy.common.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.dom4j.Document;
@@ -333,7 +336,27 @@ public abstract class HttpUtilsEx {
     }
 
     public static ResponseModel doGet(RequestModel model) {
+        System.out.println("get: " + model.urlForGet());
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+        HttpGet httpGet = new HttpGet(model.urlForGet());
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(httpGet);
+            return doRequestResult(model, response);
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(httpClient);
+            IOUtils.closeQuietly(response);
+        }
+        return null;
+    }
+
+    private static ResponseModel doRequestResult(RequestModel requestModel, CloseableHttpResponse response) {
+        System.out.println("result: " + response);
         return null;
     }
 

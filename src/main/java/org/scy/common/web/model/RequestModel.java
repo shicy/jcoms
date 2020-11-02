@@ -1,5 +1,9 @@
 package org.scy.common.web.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 /**
@@ -18,7 +22,7 @@ public class RequestModel {
     }
 
     public String getUrl() {
-        return url;
+        return StringUtils.trimToEmpty(url);
     }
 
     public void setUrl(String url) {
@@ -33,8 +37,34 @@ public class RequestModel {
         this.params = params;
     }
 
+    public String urlForGet() {
+        String _url = getUrl();
+        if (_url.length() > 0) {
+            String params = getUrlParams();
+            if (params.length() > 0)
+                _url += "?" + params;
+        }
+        return _url;
+    }
+
     public String getUrlParams() {
-        return "";
+        if (params == null)
+            return "";
+        StringBuilder builder = new StringBuilder();
+        for (String key: params.keySet()) {
+            if (builder.length() > 0)
+                builder.append("&");
+            String value = StringUtils.trimToEmpty(params.get(key));
+            if (value.length() > 0) {
+                try {
+                    value = URLEncoder.encode(value, "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+            builder.append(key).append("=").append(value);
+        }
+        return builder.toString();
     }
 
 }
