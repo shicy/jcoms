@@ -2,7 +2,6 @@ package org.scy.common.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -10,6 +9,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.dom4j.Document;
 import org.scy.common.web.model.RequestModel;
 import org.scy.common.web.model.ResponseModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ import java.util.Map;
  * Created by hykj on 2017/8/16.
  */
 public abstract class HttpUtilsEx {
+
+    private final static Logger logger = LoggerFactory.getLogger(HttpUtilsEx.class);
 
     /**
      * 将一个文件输出到Response，即下载文件
@@ -336,27 +339,31 @@ public abstract class HttpUtilsEx {
     }
 
     public static ResponseModel doGet(RequestModel model) {
-        System.out.println("get: " + model.urlForGet());
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        String url = model.urlForGet();
+        logger.debug("=> get: " + url);
 
-        HttpGet httpGet = new HttpGet(model.urlForGet());
+        HttpGet httpGet = new HttpGet(url);
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         CloseableHttpResponse response = null;
+
         try {
             response = httpClient.execute(httpGet);
-            return doRequestResult(model, response);
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return new ResponseModel(response);
+        } catch (Exception e) {
+             e.printStackTrace();
+            return new ResponseModel(e);
         } finally {
             IOUtils.closeQuietly(httpClient);
             IOUtils.closeQuietly(response);
         }
+    }
+
+    public static ResponseModel doPost(RequestModel model) {
+        logger.debug("=> post: " + model.getUrl());
         return null;
     }
 
-    private static ResponseModel doRequestResult(RequestModel requestModel, CloseableHttpResponse response) {
-        System.out.println("result: " + response);
+    private static ResponseModel doRequest(RequestModel requestModel) {
         return null;
     }
 

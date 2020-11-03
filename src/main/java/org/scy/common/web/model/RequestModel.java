@@ -12,13 +12,29 @@ import java.util.Map;
  */
 public class RequestModel {
 
+    private Method method;
     private String url;
     private Map<String, String> params;
+    private String body;
 
-    public RequestModel() {}
+    public enum Method {
+        GET,
+        POST,
+        JSON,
+        UPLOAD,
+        DOWNLOAD
+    }
 
     public RequestModel(String url) {
         this.url = url;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
     }
 
     public String getUrl() {
@@ -35,6 +51,14 @@ public class RequestModel {
 
     public void setParams(Map<String, String> params) {
         this.params = params;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public String urlForGet() {
