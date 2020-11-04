@@ -1,4 +1,4 @@
-package org.scy.common.web.model;
+package org.scy.common.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,7 +10,7 @@ import java.util.Map;
  * 发起Http请求的参数信息
  * Created by shicy 2020/11/1
  */
-public class RequestModel {
+public class HttpRequest {
 
     private Method method;
     private String url;
@@ -18,14 +18,23 @@ public class RequestModel {
     private String body;
 
     public enum Method {
-        GET,
-        POST,
-        JSON,
-        UPLOAD,
-        DOWNLOAD
+        GET("GET"),
+        POST("POST"),
+        JSON("JSON"),
+        UPLOAD("UPLOAD"),
+        DOWNLOAD("DOWNLOAD");
+
+        private final String value;
+        Method(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
-    public RequestModel(String url) {
+    public HttpRequest(String url) {
         this.url = url;
     }
 

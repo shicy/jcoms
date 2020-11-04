@@ -106,6 +106,10 @@ public class HttpResult {
         return error(e.getMessage());
     }
 
+    public static HttpResult parse(String jsonStr) {
+        return JSONObject.parseObject(jsonStr, HttpResult.class);
+    }
+
     /**
      * 转换为 JSON 字符串
      */
@@ -161,7 +165,21 @@ public class HttpResult {
      * 获取对象列表
      */
     @JSONField(serialize = false)
+    @SuppressWarnings("unchecked")
     public <T> T[] getDatas(Class<T> entityCls) {
+        List<T> results = getDataList(entityCls);
+        if (results != null) {
+            return results.toArray((T[])Array.newInstance(entityCls, 0));
+        }
+        return null;
+    }
+
+    /**
+     * 获取对象列表
+     */
+    @JSONField(serialize = false)
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getDataList(Class<T> entityCls) {
         if (data != null) {
             try {
                 List<T> results = null;
@@ -172,9 +190,7 @@ public class HttpResult {
                 else if (data instanceof List) {
                     results = (List<T>)data;
                 }
-                if (results != null) {
-                    return results.toArray((T[])Array.newInstance(entityCls, 0));
-                }
+                return results;
             }
             catch (Exception e) {
                 // .

@@ -2,30 +2,19 @@ package org.scy.common.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.dom4j.Document;
-import org.scy.common.web.model.RequestModel;
-import org.scy.common.web.model.ResponseModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.Map;
 
 /**
  * Http 相关工具类
  * Created by hykj on 2017/8/16.
  */
 public abstract class HttpUtilsEx {
-
-    private final static Logger logger = LoggerFactory.getLogger(HttpUtilsEx.class);
 
     /**
      * 将一个文件输出到Response，即下载文件
@@ -330,41 +319,6 @@ public abstract class HttpUtilsEx {
             e.printStackTrace();
         }
         return fileName;
-    }
-
-    public static ResponseModel doGet(String url, Map<String, String> params) {
-        RequestModel model = new RequestModel(url);
-        model.setParams(params);
-        return doGet(model);
-    }
-
-    public static ResponseModel doGet(RequestModel model) {
-        String url = model.urlForGet();
-        logger.debug("=> get: " + url);
-
-        HttpGet httpGet = new HttpGet(url);
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        CloseableHttpResponse response = null;
-
-        try {
-            response = httpClient.execute(httpGet);
-            return new ResponseModel(response);
-        } catch (Exception e) {
-             e.printStackTrace();
-            return new ResponseModel(e);
-        } finally {
-            IOUtils.closeQuietly(httpClient);
-            IOUtils.closeQuietly(response);
-        }
-    }
-
-    public static ResponseModel doPost(RequestModel model) {
-        logger.debug("=> post: " + model.getUrl());
-        return null;
-    }
-
-    private static ResponseModel doRequest(RequestModel requestModel) {
-        return null;
     }
 
 }
