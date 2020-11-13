@@ -131,6 +131,10 @@
             <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-httpclient</artifactId>
             <version>8.18.0</version>
