@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -85,15 +86,21 @@ public abstract class HttpClientUtils {
         return doRequest(request);
     }
 
-    public static HttpResponse doDownload(String url, Map<String, String> params) {
+    public static HttpResponse doDownload(String url, Map<String, String> params, OutputStream output) {
         HttpRequest request = new HttpRequest(url);
         request.setMethod(HttpRequest.Method.DOWNLOAD);
         request.setParams(params);
-        return doRequest(request);
+        return doRequest(request, output);
     }
 
     public static HttpResponse doRequest(HttpRequest request) {
+        return doRequest(request, null);
+    }
+
+    public static HttpResponse doRequest(HttpRequest request, OutputStream output) {
         logger.debug(request.getMethod().getValue() + ": " + request.getUrl());
+
+        HttpResponse response = new HttpResponse();
 
         HttpRequestBase httpRequest;
         if (request.getMethod() == HttpRequest.Method.GET ||
@@ -109,7 +116,9 @@ public abstract class HttpClientUtils {
             } catch (IOException e) {
                 e.printStackTrace();
                 request.clean();
-                return new HttpResponse(e);
+
+                response.setError(e);
+                return response;
             }
         }
         else {
@@ -123,14 +132,16 @@ public abstract class HttpClientUtils {
         try {
             httpClient = HttpClientBuilder.create().build();
             httpResponse = httpClient.execute(httpRequest);
-            return new HttpResponse(httpResponse);
+            response.setOutput(output);
+            response.setResponse(httpResponse);
         } catch (Exception e) {
-            return new HttpResponse(e);
+            response.setError(e);
         } finally {
             request.clean();
             IOUtils.closeQuietly(httpResponse);
             IOUtils.closeQuietly(httpClient);
         }
+        return response;
     }
 
 }

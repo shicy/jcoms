@@ -7,6 +7,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Http请求响应结果
@@ -19,31 +20,32 @@ public class HttpResponse {
     private Exception error;
     private int status;
     private String body;
-
-    public HttpResponse(CloseableHttpResponse response) {
-        this.setResponse(response);
-    }
-
-    public HttpResponse(Exception error) {
-        this.setError(error);
-    }
+    private OutputStream output;
 
     public void setResponse(CloseableHttpResponse response) {
         this.response = response;
-        if (response != null) {
-            status = response.getStatusLine().getStatusCode();
-            if (status == 200) {
-                try {
-                    HttpEntity httpEntity = response.getEntity();
-                    body = StringUtils.trimToEmpty(EntityUtils.toString(httpEntity));
-                    String contentType = httpEntity.getContentType().getValue();
-                    if (StringUtils.containsIgnoreCase(contentType, "json")) {
-                        result = HttpResult.parse(body);
-                    }
-                } catch (IOException e) {
-                    this.setError(e);
+        if (response == null)
+            return;
+
+        status = response.getStatusLine().getStatusCode();
+        if (status != 200)
+            return;
+
+        try {
+            HttpEntity httpEntity = response.getEntity();
+            String contentType = httpEntity.getContentType().getValue();
+            if (StringUtils.containsIgnoreCase(contentType, "octet")) {
+                if (output != null)
+                    httpEntity.writeTo(output);
+            }
+            else {
+                body = StringUtils.trimToEmpty(EntityUtils.toString(httpEntity));
+                if (StringUtils.containsIgnoreCase(contentType, "json")) {
+                    result = HttpResult.parse(body);
                 }
             }
+        } catch (IOException e) {
+            this.setError(e);
         }
     }
 
@@ -75,6 +77,10 @@ public class HttpResponse {
         this.error = error;
     }
 
+    public void setOutput(OutputStream output) {
+        this.output = output;
+    }
+
     public HttpResult getResult() {
         return result;
     }
@@ -82,4 +88,5 @@ public class HttpResponse {
     public String getBody() {
         return body;
     }
+
 }

@@ -546,18 +546,18 @@ public abstract class FileUtilsEx {
     /**
      * 将字节码写入文件 add by shicy 2013-1-26
      */
-    public static void write(String fileName, byte[] datas) throws IOException {
-        write(new File(fileName), datas);
+    public static void write(String destFileName, byte[] datas) throws IOException {
+        write(new File(destFileName), datas);
     }
 
     /**
      * 将字节码写入文件
      */
-    public static void write(File file, byte[] datas) throws IOException {
+    public static void write(File destFile, byte[] datas) throws IOException {
         OutputStream output = null;
         try {
-            makeDirectory(file.getAbsolutePath());
-            output = new BufferedOutputStream(new FileOutputStream(file));
+            makeDirectory(destFile.getAbsolutePath());
+            output = new BufferedOutputStream(new FileOutputStream(destFile));
             output.write(datas);
             output.flush();
         } finally {
@@ -568,16 +568,31 @@ public abstract class FileUtilsEx {
     /**
      * 将Http文件流写入文件
      */
-    public static void write(String fileName, MultipartFile file) throws IOException {
+    public static void write(String destFileName, MultipartFile srcFile) throws IOException {
+        write(new File(destFileName), srcFile);
+    }
+
+    public static void write(File destFile, MultipartFile srcFile) throws IOException {
         InputStream input = null;
-        OutputStream output = null;
         try {
-            makeDirectory(fileName);
-            input = file.getInputStream();
-            output = new FileOutputStream(new File(fileName));
-            write(output, input);
+            input = srcFile.getInputStream();
+            write(destFile, input);
         } finally {
             IOUtils.closeQuietly(input);
+        }
+    }
+
+    public static void write(String fileName, InputStream input) throws IOException {
+        write(new File(fileName), input);
+    }
+
+    public static void write(File destFile, InputStream input) throws IOException {
+        makeDirectory(destFile.getAbsolutePath());
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(destFile);
+            write(output, input);
+        } finally {
             IOUtils.closeQuietly(output);
         }
     }
@@ -585,10 +600,10 @@ public abstract class FileUtilsEx {
     /**
      * 文件写入输出流
      */
-    public static void write(OutputStream output, File file) throws IOException {
+    public static void write(OutputStream output, File srcFile) throws IOException {
         InputStream input = null;
         try {
-            input = new FileInputStream(file);
+            input = new FileInputStream(srcFile);
             write(output, input);
         } finally {
             IOUtils.closeQuietly(input);
