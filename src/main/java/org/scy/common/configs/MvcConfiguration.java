@@ -3,7 +3,7 @@ package org.scy.common.configs;
 import org.scy.common.BaseApplication;
 import org.scy.common.web.interceptor.AccessTokenInterceptor;
 import org.scy.common.web.interceptor.ErrorInterceptor;
-import org.scy.common.web.interceptor.LoginInterceptor;
+import org.scy.common.web.interceptor.AuthInterceptor;
 import org.scy.common.web.interceptor.SessionInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -13,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * MVC 框架配置
  */
 @Configuration
-@SuppressWarnings("unused")
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
@@ -31,7 +30,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new AccessTokenInterceptor(configs)).addPathPatterns("/**");
 
         // 登录验证拦截器
-        registry.addInterceptor(new LoginInterceptor(configs)).addPathPatterns("/**");
+        registry.addInterceptor(new AuthInterceptor(configs)).addPathPatterns("/**");
     }
 
 }

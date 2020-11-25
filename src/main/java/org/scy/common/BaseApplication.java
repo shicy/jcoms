@@ -20,10 +20,9 @@ import javax.annotation.PostConstruct;
  * 应用程序基类
  * Created by shicy on 2017/8/30
  */
-@SuppressWarnings("unused")
 public class BaseApplication  {
 
-    private Logger logger = LoggerFactory.getLogger(BaseApplication.class);
+    private final Logger logger = LoggerFactory.getLogger(BaseApplication.class);
 
     // 当前应用程序实例
     private static SpringApplication application;

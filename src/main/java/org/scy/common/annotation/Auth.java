@@ -10,4 +10,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Auth {
+    // 用户类型
+    int[] type() default {};
+    // 用户角色
+    int[] role() default {};
 }

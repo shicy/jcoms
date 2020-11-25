@@ -4,7 +4,6 @@ package org.scy.common.web.session;
  * 基本用户信息
  * Created by shicy on 2017/10/10.
  */
-@SuppressWarnings("unused")
 public class User {
 
     private int id;
@@ -13,6 +12,7 @@ public class User {
     private String remark;
     private int type;
     private int state;
+    private int[] roleIds;
 
     public int getId() {
         return id;
@@ -60,6 +60,14 @@ public class User {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public int[] getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(int[] roleIds) {
+        this.roleIds = roleIds;
     }
 
 }

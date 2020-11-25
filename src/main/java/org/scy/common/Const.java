@@ -4,7 +4,6 @@ package org.scy.common;
  * 常量定义
  * Created by shicy on 2017/8/31.
  */
-@SuppressWarnings("unused")
 public final class Const {
 
     // 平台帐号
@@ -30,6 +29,9 @@ public final class Const {
 
     // 邮箱登录
     public final static short LOGIN_TYPE_EMAIL = 4;
+
+    // 管理员
+    public final static short USER_TYPE_ADMIN = 1;
 
     // 参数错误
     public final static short MSG_CODE_PARAMINVALID  = 1000;
