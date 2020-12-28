@@ -17,6 +17,7 @@ public interface BaseMapper<T> {
     int delete(T model);
 
     List<T> find(Selector selector);
+    int count(Selector selector);
     int countFind(Selector selector);
 
 }
