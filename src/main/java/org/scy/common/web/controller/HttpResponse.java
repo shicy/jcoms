@@ -34,9 +34,8 @@ public class HttpResponse {
         try {
             HttpEntity httpEntity = response.getEntity();
             String contentType = httpEntity.getContentType().getValue();
-            if (StringUtils.containsIgnoreCase(contentType, "octet")) {
-                if (output != null)
-                    httpEntity.writeTo(output);
+            if (output != null/*StringUtils.containsIgnoreCase(contentType, "octet") */) {
+                httpEntity.writeTo(output);
             }
             else {
                 body = StringUtils.trimToEmpty(EntityUtils.toString(httpEntity));

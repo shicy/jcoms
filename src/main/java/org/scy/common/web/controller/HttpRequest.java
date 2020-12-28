@@ -40,7 +40,9 @@ public class HttpRequest {
     private String body;
     private File file;
     private MultipartFile multipartFile;
+    private InputStream inputStream;
     private String uploadName = "file";
+    private String fileName = "";
 
     private InputStream fileInputStream;
 
@@ -91,18 +93,46 @@ public class HttpRequest {
 
     public void setFile(File file) {
         this.file = file;
-        if (file != null)
+        if (file != null) {
             this.multipartFile = null;
+            this.inputStream = null;
+        }
     }
 
     public void setMultipartFile(MultipartFile multipartFile) {
         this.multipartFile = multipartFile;
-        if (multipartFile != null)
+        if (multipartFile != null) {
             this.file = null;
+            this.inputStream = null;
+        }
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+        if (inputStream != null) {
+            this.file = null;
+            this.multipartFile = null;
+        }
+    }
+
+    public String getUploadName() {
+        return uploadName;
     }
 
     public void setUploadName(String uploadName) {
         this.uploadName = uploadName;
+    }
+
+    public String getFileName() {
+        if (file != null)
+            return file.getName();
+        if (multipartFile != null)
+            return multipartFile.getOriginalFilename();
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String urlForGet() {
@@ -155,20 +185,26 @@ public class HttpRequest {
 
     public void clean() {
         IOUtils.closeQuietly(fileInputStream);
+        IOUtils.closeQuietly(inputStream);
     }
 
     private HttpEntity getDataAsFile() throws IOException {
-        if (file != null || multipartFile != null) {
+        if (file != null || multipartFile != null || inputStream != null) {
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setCharset(Charset.forName("utf-8"));
             builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+            String fileName = getFileName();
+            String uploadName = getUploadName();
             if (file != null) {
-                builder.addPart(uploadName, new FileBody(file));
+                builder.addPart(uploadName, new FileBody(file, ContentType.DEFAULT_BINARY, fileName));
             }
-            else {
+            else if (multipartFile != null) {
                 fileInputStream = multipartFile.getInputStream();
                 builder.addBinaryBody(uploadName, fileInputStream,
-                        ContentType.MULTIPART_FORM_DATA, multipartFile.getOriginalFilename());
+                        ContentType.MULTIPART_FORM_DATA, fileName);
+            }
+            else if (inputStream != null) {
+                builder.addBinaryBody(uploadName, inputStream, ContentType.MULTIPART_FORM_DATA, fileName);
             }
             if (params != null) {
                 for (String key: params.keySet()) {

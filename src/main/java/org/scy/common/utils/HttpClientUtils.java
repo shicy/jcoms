@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
@@ -71,17 +72,36 @@ public abstract class HttpClientUtils {
     }
 
     public static HttpResponse doUpload(String url, File file, Map<String, String> params) {
+        return doUpload(url, file, null, params);
+    }
+
+    public static HttpResponse doUpload(String url, File file, String fileName, Map<String, String> params) {
         HttpRequest request = new HttpRequest(url);
         request.setMethod(HttpRequest.Method.UPLOAD);
         request.setFile(file);
+        request.setFileName(fileName);
         request.setParams(params);
         return doRequest(request);
     }
 
     public static HttpResponse doUpload(String url, MultipartFile file, Map<String, String> params) {
+        return doUpload(url, file, null, params);
+    }
+
+    public static HttpResponse doUpload(String url, MultipartFile file, String fileName, Map<String, String> params) {
         HttpRequest request = new HttpRequest(url);
         request.setMethod(HttpRequest.Method.UPLOAD);
         request.setMultipartFile(file);
+        request.setFileName(fileName);
+        request.setParams(params);
+        return doRequest(request);
+    }
+
+    public static HttpResponse doUpload(String url, InputStream inputStream, String fileName, Map<String, String> params) {
+        HttpRequest request = new HttpRequest(url);
+        request.setMethod(HttpRequest.Method.UPLOAD);
+        request.setInputStream(inputStream);
+        request.setFileName(fileName);
         request.setParams(params);
         return doRequest(request);
     }

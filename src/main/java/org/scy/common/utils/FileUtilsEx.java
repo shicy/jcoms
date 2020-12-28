@@ -364,6 +364,15 @@ public abstract class FileUtilsEx {
         return results.toArray(new File[0]);
     }
 
+    public static String getFileName(String fileName) {
+        if (StringUtils.isBlank(fileName))
+            return "";
+        fileName = StringUtilsEx.tranToFileSeparator(fileName);
+        if (StringUtils.indexOf(fileName, File.separator) >= 0)
+            return StringUtils.substringAfterLast(fileName, File.separator);
+        return fileName;
+    }
+
     /**
      * 获取文件后缀名
      */
