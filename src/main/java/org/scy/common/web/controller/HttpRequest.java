@@ -195,6 +195,7 @@ public class HttpRequest {
             builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
             String fileName = getFileName();
             String uploadName = getUploadName();
+            ContentType textContentType = ContentType.create("text/plain", "UTF-8");
             if (file != null) {
                 builder.addPart(uploadName, new FileBody(file, ContentType.DEFAULT_BINARY, fileName));
             }
@@ -208,7 +209,7 @@ public class HttpRequest {
             }
             if (params != null) {
                 for (String key: params.keySet()) {
-                    builder.addTextBody(key, params.get(key), ContentType.TEXT_PLAIN);
+                    builder.addTextBody(key, params.get(key), textContentType);
                 }
             }
             return builder.build();
