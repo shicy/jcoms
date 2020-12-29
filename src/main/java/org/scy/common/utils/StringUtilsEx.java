@@ -26,6 +26,9 @@ public abstract class StringUtilsEx {
 
     private static final char[] chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
+    // 汉字表达式
+    private static final Pattern cnPattern = Pattern.compile("[\\u4e00-\\u9fa5]");
+
     /**
      * 过滤文本内容，去除标点符号以及多余空格
      */
@@ -49,6 +52,14 @@ public abstract class StringUtilsEx {
             str.append(chars[random.nextInt(chars.length)]);
         }
         return str.toString();
+    }
+
+    /**
+     * 判断是不是汉字
+     */
+    public static boolean isChineseChar(char ch) {
+        Matcher matcher = cnPattern.matcher("" + ch);
+        return matcher.find();
     }
 
     /**
